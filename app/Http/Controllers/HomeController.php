@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
+use App\ActivePlant;
+use App\Sensor;
+use App\LogPower;
+use App\LogPlant;
 
 class HomeController extends Controller
 {
@@ -28,7 +32,16 @@ class HomeController extends Controller
         if (Auth::user()->hasRole('admin')) {
             return view('admin/home');
         } else {
-            return view('users/home');
+            $data = $this->users();
+
+            return view('users/home',['data' => $data]);
         }
+    }
+
+    public function users() { 
+
+        $main = ActivePlant::where('activeplants.user_id',Auth::id())->get();
+
+        return $main;
     }
 }

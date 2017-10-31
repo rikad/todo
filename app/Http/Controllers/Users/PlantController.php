@@ -4,6 +4,12 @@ namespace App\Http\Controllers\Users;
 
 use Illuminate\Http\Request;
 
+use Auth;
+use App\ActivePlant;
+use App\Sensor;
+use App\LogPower;
+use App\LogPlant;
+
 class PlantController extends \App\Http\Controllers\Controller
 {
     /**
@@ -14,6 +20,14 @@ class PlantController extends \App\Http\Controllers\Controller
     public function index()
     {
         return view('users.plant.index');
+    }
+
+    public function data($id)
+    {
+
+        $data = LogPlant::orderBy('id','desc')->first();
+
+        return response()->json($data);
     }
 
     /**

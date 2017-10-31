@@ -13,41 +13,41 @@
             <div class="widget-content">
 
 
-                  <div class="shortcuts">
+              <div class="shortcuts">
 
-                  <a href="{{ route('home') }}" class="shortcut shortcut-active"><i class="shortcut-icon icon-list-alt"></i><span class="shortcut-label">Greenhouse Status</span> </a>
+                <a href="{{ route('home') }}" class="shortcut shortcut-active"><i class="shortcut-icon icon-list-alt"></i><span class="shortcut-label">Greenhouse Status</span> </a>
 
-                  <a href="{{ route('utilities.index') }}" class="shortcut"><i class="shortcut-icon icon-bookmark"></i><span class="shortcut-label">Utilities</span> </a>
+                <a href="{{ route('utilities.index') }}" class="shortcut"><i class="shortcut-icon icon-bookmark"></i><span class="shortcut-label">Utilities</span> </a>
 
-                  <a href="{{ route('schedule.index') }}" class="shortcut"><i class="shortcut-icon icon-signal"></i> <span class="shortcut-label">Planting Schedule</span> </a>
+                <a href="{{ route('schedule.index') }}" class="shortcut"><i class="shortcut-icon icon-signal"></i> <span class="shortcut-label">Planting Schedule</span> </a>
 
-                  <a href="{{ route('plant.index') }}" class="shortcut"> <i class="shortcut-icon icon-comment"></i><span class="shortcut-label">Plant</span> </a>
+                <a href="{{ route('plant.index') }}" class="shortcut"> <i class="shortcut-icon icon-comment"></i><span class="shortcut-label">Plant</span> </a>
 
-                  </div>
-                  <!-- /shortcuts --> 
+              </div>
+              <!-- /shortcuts --> 
 
 
-                  </div>
-                  <!-- /widget-content --> 
             </div>
-            <!-- /widget -->
-
+            <!-- /widget-content --> 
           </div>
+          <!-- /widget -->
+
         </div>
+      </div>
 
-        <div class="row">
-          <div class="span12">
+      <div class="row">
+        <div class="span12">
 
-            <div class="widget">
-              <!-- /widget-header -->
-              <div class="widget-content">
+          <div class="widget">
+            <!-- /widget-header -->
+            <div class="widget-content">
 
-                <div class="row">
-                  <div class="span9">
+              <div class="row">
+                <div class="span9">
 
 
-                    <div style="text-align: right">
-                      <img src="img/sun.png" width="50"><br>
+                  <div style="text-align: right">
+<!--                       <img src="img/sun.png" width="50"><br>
                       Sun: ... lux
                       <br>
                       <table align="right" width="100px" style="text-align: center">
@@ -62,101 +62,110 @@
                           <td>High</td>
                         </tr>
                       </table>
-
-                      <div>
-                        <img src="img/greenhouse.jpg" width="100%">                   
-                      </div>
+                    -->
+                    <div>
+                      <img src="img/greenhouse.jpg" width="100%">                   
                     </div>
-
-
                   </div>
 
-                  <div class="span2" style="text-align: center">
-                    <h3 style="font-size: 30px">Status</h3><br>
-                    <img src="img/smile.jpg" width="150">
-                    <p style="font-size:20px">Tomatoes are in Good Condition</p>
-                    <br>
-                    <h3 style="font-size: 30px">Condition</h3><br>
-                    <p style="font-size:20px">Sprinkle is not active</p>
-                  </div>
+
                 </div>
 
+                <div class="span2" style="text-align: center">
+
+                  <div class="form-group">
+                    <select class="form-control" onchange="changePlant(this.value)">
+                      @foreach($data as $value)
+                      <option value="{{ $value->id }}">{{ $value->name }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+
+                  <table class="table table-bordered">
+                    <tr>
+                      <td>Suhu</td>
+                      <td id="temperature"></td>
+                    </tr>
+                    <tr>
+                      <td>Kelembapan</td>
+                      <td id="humidity"></td>
+                    </tr>
+                    <tr>
+                      <td>Tekanan</td>
+                      <td id="rssi"></td>
+                    </tr>
+                    <tr>
+                      <td>pH</td>
+                      <td id="ph"></td>
+                    </tr>
+                    <tr>
+                      <td>Itensitas Cahaya</td>
+                      <td id="itensity"></td>
+                    </tr>
+                    <tr>
+                      <td>Electroconductivity</td>
+                      <td id="ec"></td>
+                    </tr>
+                    <tr>
+                      <td>Kecepatan Angin</td>
+                      <td id="vwind"></td>
+                    </tr>
+                  </table>
+
+                </div>
               </div>
-              <!-- /widget-content --> 
+
             </div>
-            <!-- /widget -->
-
+            <!-- /widget-content --> 
           </div>
+          <!-- /widget -->
+
         </div>
-
-        <div class="row">
-          <div class="span12">
-
-            <div class="widget">
-              <div class="widget-header"> <i class="icon-signal"></i>
-                <h3> Grafik Bacaan Sensor</h3>
-              </div>
-              <!-- /widget-header -->
-              <div class="widget-content">
-                <canvas id="area-chart" class="chart-holder" height="250" width="1000"> </canvas>
-                <!-- /area-chart --> 
-              </div>
-              <!-- /widget-content --> 
-            </div>
-            <!-- /widget -->
-
-          </div>
-        </div>
-
       </div>
+
+
     </div>
   </div>
-  @endsection
+</div>
+@endsection
 
-  @section('js')
-  <script src="js/chart.min.js" type="text/javascript"></script> 
+@section('js')
+<script src="js/chart.min.js" type="text/javascript"></script> 
 
-  <script>     
+<script>
 
-    var lineChartData = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
-      datasets: [
-      {
-        fillColor: "rgba(220,220,220,0.5)",
-        strokeColor: "rgba(220,220,220,1)",
-        pointColor: "rgba(220,220,220,1)",
-        pointStrokeColor: "#fff",
-        data: [65, 59, 90, 81, 56, 55, 40]
-      },
-      {
-        fillColor: "rgba(151,187,205,0.5)",
-        strokeColor: "rgba(151,187,205,1)",
-        pointColor: "rgba(151,187,205,1)",
-        pointStrokeColor: "#fff",
-        data: [28, 48, 40, 19, 96, 27, 100]
+  var currentPlantId = 1;
+
+  function updateStatus(id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var data = JSON.parse(this.responseText);
+
+        document.getElementById("temperature").innerHTML = data.temperature;
+        document.getElementById("humidity").innerHTML = data.humidity;
+        document.getElementById("itensity").innerHTML = data.itensity;
+        document.getElementById("rssi").innerHTML = data.rssi;
+        document.getElementById("ph").innerHTML = data.ph;
+        document.getElementById("ec").innerHTML = data.ec;
+        document.getElementById("vwind").innerHTML = data.vwind;
+
       }
-      ]
+    };
+    xhttp.open("GET", "{{ route('logTanaman','') }}/"+id, true);
+    xhttp.send();
 
-    }
+  }
 
-    var myLine = new Chart(document.getElementById("area-chart").getContext("2d")).Line(lineChartData);
+  function changePlant(id) {
+    currentPlantId = id;
+    updateStatus(currentPlantId);
+  }
 
+  updateStatus(currentPlantId);
 
-    var barChartData = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
-      datasets: [
-      {
-        fillColor: "rgba(220,220,220,0.5)",
-        strokeColor: "rgba(220,220,220,1)",
-        data: [65, 59, 90, 81, 56, 55, 40]
-      },
-      {
-        fillColor: "rgba(151,187,205,0.5)",
-        strokeColor: "rgba(151,187,205,1)",
-        data: [28, 48, 40, 19, 96, 27, 100]
-      }
-      ]
-
-    }
-  </script>
-  @endsection
+  setInterval(function() {
+    updateStatus(currentPlantId);
+  }, 3000);
+</script>
+@endsection

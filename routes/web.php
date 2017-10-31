@@ -31,6 +31,8 @@ Route::group(['prefix'=>'admin', 'middleware' => 'auth'], function () {
 
 Route::group(['prefix'=>'user', 'middleware' => 'auth'], function () {
 
+	Route::get('plant/data/{id}','Users\PlantController@data')->name('logTanaman');
+
 	Route::resource('plant', 'Users\PlantController');
 	Route::resource('schedule', 'Users\ScheduleController');
 	Route::resource('utilities', 'Users\UtilitiesController');
