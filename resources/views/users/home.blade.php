@@ -19,9 +19,9 @@
 
                 <a href="{{ route('utilities.index') }}" class="shortcut"><i class="shortcut-icon icon-bookmark"></i><span class="shortcut-label">Utilities</span> </a>
 
-                <a href="{{ route('schedule.index') }}" class="shortcut"><i class="shortcut-icon icon-signal"></i> <span class="shortcut-label">Planting Schedule</span> </a>
+                <a href="{{ route('schedule.index') }}" class="shortcut"><i class="shortcut-icon icon-calendar"></i> <span class="shortcut-label">Planting Schedule</span> </a>
 
-                <a href="{{ route('plant.index') }}" class="shortcut"> <i class="shortcut-icon icon-comment"></i><span class="shortcut-label">Plant</span> </a>
+                <a href="{{ route('plant.index') }}" class="shortcut"> <i class="shortcut-icon icon-globe"></i><span class="shortcut-label">Plant</span> </a>
 
               </div>
               <!-- /shortcuts --> 
@@ -83,7 +83,7 @@
 
                   <table class="table table-bordered">
                     <tr>
-                      <td>Suhu</td>
+                      <td><i class="fa fa-thermometer"></i> Suhu</td>
                       <td id="temperature"></td>
                     </tr>
                     <tr>
@@ -99,7 +99,7 @@
                       <td id="ph"></td>
                     </tr>
                     <tr>
-                      <td>Itensitas Cahaya</td>
+                      <td><i class="shortcut-icon icon-sun"></i> Itensitas Cahaya</td>
                       <td id="itensity"></td>
                     </tr>
                     <tr>

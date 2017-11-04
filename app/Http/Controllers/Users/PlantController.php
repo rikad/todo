@@ -9,6 +9,7 @@ use App\ActivePlant;
 use App\Sensor;
 use App\LogPower;
 use App\LogPlant;
+use Yajra\DataTables\DataTables;
 
 class PlantController extends \App\Http\Controllers\Controller
 {
@@ -17,8 +18,13 @@ class PlantController extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $data = ActivePlant::select('activeplants.*');
+            return Datatables::of($data)->make(true);
+        }
+
         return view('users.plant.index');
     }
 

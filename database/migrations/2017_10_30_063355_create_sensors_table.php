@@ -15,62 +15,77 @@ class CreateSensorsTable extends Migration
     {
         Schema::create('sensors', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('user_id');
             $table->string('serial',20);
             $table->string('password',20);
             $table->string('type',10);
-            $table->boolean('is_available')->default(false);
-            $table->boolean('is_used')->default(false);
             $table->timestamps(); 
 
-        });
-
-        Schema::create('sensor_user', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('sensor_id');
-            $table->unsignedInteger('user_id');
-
-            $table->foreign('sensor_id')->references('id')->on('sensors')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
 
-
+        Schema::create('plants', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name',50);
+            $table->integer('umur1')->nullable();
+            $table->integer('umur2')->nullable();
+            $table->integer('umur3')->nullable();
+            $table->integer('umur4')->nullable();
+            $table->float('kc1')->nullable();
+            $table->float('kc2')->nullable();
+            $table->float('kc3')->nullable();
+            $table->float('kc4')->nullable();
+            $table->integer('tmin')->nullable();
+            $table->integer('tmax')->nullable();
+            $table->integer('hmin')->nullable();
+            $table->integer('hmax')->nullable();
+            $table->integer('imin')->nullable();
+            $table->integer('imax')->nullable();
+            $table->integer('panenmin')->nullable();
+            $table->integer('panenmax')->nullable();
+            $table->timestamps();
+        });
 
         Schema::create('activeplants', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('sensor_id');
+            $table->unsignedinteger('plant_id');
             $table->string('name',50);
-            $table->integer('tanaman');
-            $table->integer('area');
-            $table->integer('capground');
-            $table->string('city');
+            $table->integer('area')->nullable();
+            $table->integer('capground')->nullable();
+            $table->string('city')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('sensor_id')->references('id')->on('sensors')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('plant_id')->references('id')->on('plants')->onUpdate('cascade')->onDelete('cascade');
 
         });
 
         Schema::create('log_plants', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('activeplant_id');
-            $table->string('temperature',10)->nullable();
-            $table->string('humidity',10)->nullable();
-            $table->string('itensity',10)->nullable();
-            $table->string('ph',10)->nullable();
-            $table->string('ec',10)->nullable();
-            $table->string('vwind',10)->nullable();
-            $table->string('rssi',10)->nullable();
+            $table->unsignedInteger('sensor_id');
+            $table->float('temperature')->nullable();
+            $table->float('humidity')->nullable();
+            $table->float('shumidity')->nullable();
+            $table->integer('intensity')->nullable();
+            $table->float('ph')->nullable();
+            $table->float('ec')->nullable();
+            $table->float('vwind')->nullable();
+            $table->integer('pressure')->nullable();
+            $table->integer('rssi')->nullable();
             $table->timestamps();
 
-           $table->foreign('activeplant_id')->references('id')->on('activeplants')
+           $table->foreign('sensor_id')->references('id')->on('sensors')
                 ->onUpdate('cascade')->onDelete('cascade');
         });
 
         Schema::create('log_powers', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('activeplant_id');
-            $table->string('water',10);
+            $table->float('water');
+            $table->float('power');
             $table->timestamps();
 
            $table->foreign('activeplant_id')->references('id')->on('activeplants')
@@ -91,5 +106,6 @@ class CreateSensorsTable extends Migration
         Schema::dropIfExists('activeplants');
         Schema::dropIfExists('sensor_user');
         Schema::dropIfExists('sensors');
+        Schema::dropIfExists('plants');
     }
 }
