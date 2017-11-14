@@ -55,9 +55,14 @@ Bootstrap Admin Template by EGrappler.com
 }
 
 /*active */
-.shortcuts .shortcut-active{
+.shortcuts .shortcut-active {
 	background: #00ba8b;
-	color: #fff;
+}
+.shortcuts .shortcut-active span{
+	color: #fff !important;
+}
+.shortcuts .shortcut-active .shortcut-icon {
+	color: #fff !important;
 }
 
 

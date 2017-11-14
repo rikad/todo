@@ -4,21 +4,28 @@
 
 <div class="widget">
   <div class="widget-header"> <i class="icon-user"></i>
-    <h3> Data User</h3>
+    <h3> Data Pegawai</h3>
   </div>
   <!-- /widget-header -->
   <div class="widget-content" style="padding-left: 35px">
 
+    <div align="right">
+      <a href="{{ route('pegawai.create') }}"><button class="btn btn-primary">Tambah</button></a>
+    </div>
+    <hr>
+
     <table class="table table-bordered" id="users-table">
       <thead>
         <tr>
-          <th>Id</th>
+          <th>Nip</th>
           <th>Name</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-          <th>Active</th>
+          <th>Birthdate</th>
+          <th>Gender</th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th>Department</th>
+          <th>Jabatan</th>
+          <th>Action</th>
         </tr>
       </thead>
     </table>
@@ -32,34 +39,39 @@
 
 
 @section('css')
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('css/datatables.min.css') }}">
 @endsection
 
 @section('js')
 <script src="{{ asset('js/datatables.min.js') }}"></script>
 
 <script>
-$(function() {
+  $(function() {
+    var editPath = '{{ url("/admin/pegawai/") }}/';
+    var deletePath =  '{{ route("pegawai.destroy",'') }}/';
+
+    function genEditPath(id) {
+      return editPath+id+'/edit';
+    }
+
     $('#users-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: '{!! route('user.index') !!}',
-        columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
-            { data: 'username', name: 'username' },
-            { data: 'email', name: 'email' },
-            { data: 'created_at', name: 'created_at' },
-            { data: 'updated_at', name: 'updated_at' },
-            { data: 'is_active', name: 'is_active' ,render: function(data,type,full) {
-                if (data == 1) {
-                  return '<span class="btn btn-small btn-success">Active</span> <button class="btn btn-small btn-warning">Disable</button>';
-                } else {
-                  return '<span class="btn btn-small btn-danger">Not Active</span> <button class="btn btn-small btn-info">Enable</button>';
-                }
-            }}
-        ]
+      processing: true,
+      serverSide: true,
+      ajax: '{!! route('pegawai.index') !!}',
+      columns: [
+      { data: 'nip', name: 'nip' },
+      { data: 'name', name: 'name' },
+      { data: 'birthdate', name: 'birthdate' },
+      { data: 'gender', name: 'gender' },
+      { data: 'address', name: 'address' },
+      { data: 'phone', name: 'phone' },
+      { data: 'department', name: 'department' },
+      { data: 'jabatan', name: 'jabatan' },
+      { data: 'id', name: 'id', render: function(data) {
+        return '<a href="'+genEditPath(data)+'"><button class="btn btn-primary">Ubah</button></a> <a href="'+deletePath+data+'"><button class="btn btn-danger">Hapus</button></a>';
+      }},
+      ]
     });
-});
+  });
 </script>
 @endsection

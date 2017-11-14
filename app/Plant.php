@@ -25,6 +25,11 @@ class Plant extends Model
             'imax',
             'panenmin',
             'panenmax',
+            'climate',
+            'distancemin',
+            'distancemax',
+            'depthmin',
+            'depthmax',
     ];
 
 }

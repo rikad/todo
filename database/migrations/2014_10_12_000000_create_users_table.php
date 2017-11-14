@@ -23,6 +23,21 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        Schema::create('pegawai', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id')->nullable();;
+            $table->string('nip',20)->unique();
+            $table->string('name',20);
+            $table->date('birthdate')->nullable();
+            $table->string('gender',1)->nullable();
+            $table->string('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('department')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->timestamps();
+
+        });
     }
 
     /**
@@ -32,6 +47,7 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('pegawai');
         Schema::dropIfExists('users');
     }
 }

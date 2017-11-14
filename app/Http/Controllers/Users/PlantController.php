@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use Auth;
 use App\ActivePlant;
+use App\Plant;
 use App\Sensor;
 use App\LogPower;
 use App\LogPlant;
@@ -28,10 +29,17 @@ class PlantController extends \App\Http\Controllers\Controller
         return view('users.plant.index');
     }
 
-    public function data($id)
+    public function data($menu,$id)
     {
-
-        $data = LogPlant::orderBy('id','desc')->first();
+        if ($menu == 'plantbyid') {
+            $data = Plant::find($id);
+        }
+        elseif ('activeplant'){
+            $data = ActivePlant::join('log_plants','log_plants.sensor_id','activeplants.sensor_id')
+                        ->where('activeplants.id',$id)
+                        ->orderBy('log_plants.id','desc')
+                        ->first();
+        }
 
         return response()->json($data);
     }

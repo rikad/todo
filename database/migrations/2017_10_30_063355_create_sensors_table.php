@@ -13,6 +13,7 @@ class CreateSensorsTable extends Migration
      */
     public function up()
     {
+
         Schema::create('sensors', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
@@ -43,6 +44,11 @@ class CreateSensorsTable extends Migration
             $table->integer('imax')->nullable();
             $table->integer('panenmin')->nullable();
             $table->integer('panenmax')->nullable();
+            $table->string('climate',20)->nullable();
+            $table->integer('distancemin')->nullable();
+            $table->integer('distancemax')->nullable();
+            $table->integer('depthmin')->nullable();
+            $table->integer('depthmax')->nullable();
             $table->timestamps();
         });
 
@@ -101,6 +107,7 @@ class CreateSensorsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('pegawai');
         Schema::dropIfExists('log_plants');
         Schema::dropIfExists('log_powers');
         Schema::dropIfExists('activeplants');

@@ -25,13 +25,13 @@ Route::group(['prefix'=>'admin', 'middleware' => 'auth'], function () {
 
 	Route::resource('pegawai', 'Admin\PegawaiController');
 	Route::resource('user', 'Admin\UsersController');
-	Route::resource('tanaman', 'Admin\TanamanController');
+	Route::resource('plants', 'Admin\PlantsController');
 	Route::resource('finance', 'Admin\FinanceController');
 });
 
 Route::group(['prefix'=>'user', 'middleware' => 'auth'], function () {
 
-	Route::get('plant/data/{id}','Users\PlantController@data')->name('logTanaman');
+	Route::get('data/{menu}/{id}','Users\PlantController@data');
 
 	Route::resource('plant', 'Users\PlantController');
 	Route::resource('schedule', 'Users\ScheduleController');

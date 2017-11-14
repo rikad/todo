@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use App\Pegawai;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Session;
+
 
 class PegawaiController extends \App\Http\Controllers\Controller
 {
@@ -11,8 +15,13 @@ class PegawaiController extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $data = Pegawai::select('pegawai.*');
+            return Datatables::of($data)->make(true);
+        }
+
         return view('admin.pegawai.index');
     }
 
@@ -23,7 +32,7 @@ class PegawaiController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        //
+        return view('admin.pegawai.form');
     }
 
     /**
@@ -34,7 +43,22 @@ class PegawaiController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-        //
+        // $this->validate($request,[
+        //     'title' => 'required|unique:books,title',
+        //     'author_id' => 'required|exists:authors,id',
+        //     'amount' => 'required|numeric',
+        //     'cover' => 'image|max:2048'
+        // ]);
+
+        // $db = Pegawai::create($request->all());
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('pegawai.index');
+
     }
 
     /**
@@ -56,7 +80,8 @@ class PegawaiController extends \App\Http\Controllers\Controller
      */
     public function edit($id)
     {
-        //
+        $data = Pegawai::find($id);
+        return view('admin.pegawai.form')->with(compact('data'));
     }
 
     /**

@@ -4,16 +4,25 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 
-class TanamanController extends \App\Http\Controllers\Controller
+use Yajra\DataTables\DataTables;
+
+use App\Plant;
+
+class PlantsController extends \App\Http\Controllers\Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.tanaman.index');
+        if ($request->ajax()) {
+            $data = Plant::select('plants.*');
+            return Datatables::of($data)->make(true);
+        }
+
+        return view('admin.plants.index');
     }
 
     /**
