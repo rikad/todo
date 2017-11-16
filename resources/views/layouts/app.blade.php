@@ -43,11 +43,10 @@
                   @guest
                   <li><a href="{{ route('logout') }}">login</a></li>
                   @else
-                  <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
+                  <li class="dropdown"><a style="font-size: 18px" href="#" class="dropdown-toggle" data-toggle="dropdown"><i
                     class="icon-user"></i> {{ Auth::user()->name }} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="javascript:;">Profile</a></li>
-                      <li><a href="javascript:;">Settings</a></li>
+                      <li><a href="{{ route('profiles.index') }}">Profile</a></li>
                       <li><a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">Logout</a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                           {{ csrf_field() }}
@@ -56,10 +55,10 @@
                     </ul>
                   </li>
                 </ul>
-                <form class="navbar-search pull-right">
+<!--                 <form class="navbar-search pull-right">
                   <input type="text" style="background: #F9F6F1; color: black" class="search-query" placeholder="Search">
                 </form>
-                @endguest
+ -->                @endguest
               </div>
               <!--/.nav-collapse --> 
             </div>
@@ -78,9 +77,8 @@
                 <li {!! Request::is('home') ? 'class="active"' : '' !!}><a href="{{ route('home') }}"><i class="icon-dashboard"></i><span>Home</span> </a> </li>
                 <li {!! Request::is('admin/pegawai') ? 'class="active"' : '' !!}><a href="{{ route('pegawai.index') }}"><i class="icon-list-alt"></i><span>Data Pegawai</span> </a> </li>
                 <li {!! Request::is('admin/user') ? 'class="active"' : '' !!}><a href="{{ route('user.index') }}"><i class="icon-user"></i><span>Data User</span> </a> </li>
-                <li {!! Request::is('admin/tanaman') ? 'class="active"' : '' !!}><a href="{{ route('plants.index') }}"><i class="icon-globe"></i><span>Data Tanaman</span> </a></li>
-                <li {!! Request::is('admin/legal') ? 'class="active"' : '' !!}><a href="{{ route('legal.index') }}"><i class="icon-file"></i><span>Legal</span> </a> </li>
-                <li {!! Request::is('admin/finance') ? 'class="active"' : '' !!}><a href="{{ route('finance.index') }}"><i class="icon-money"></i><span>Finance</span> </a> </li>
+                <li {!! Request::is('admin/plants') ? 'class="active"' : '' !!}><a href="{{ route('plants.index') }}"><i class="icon-globe"></i><span>Data Tanaman</span> </a></li>
+                <li {!! Request::is('admin/sensors') ? 'class="active"' : '' !!}><a href="{{ route('sensors.index') }}"><i class="icon-file"></i><span>Data Sensors</span> </a> </li>
               </ul>
             </div>
             <!-- /container --> 
@@ -95,7 +93,7 @@
             <div class="col-md-12">
 
               @if (session()->has('status.message'))
-                <div class="alert alert-{{ session()->get('status.level') }}">
+                <div class="alert alert-{{ session()->get('status.level') }}" style="margin-top: 1em">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                   {!! session()->get('status.message') !!}
                 </div>

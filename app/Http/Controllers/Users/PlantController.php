@@ -11,6 +11,7 @@ use App\Sensor;
 use App\LogPower;
 use App\LogPlant;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Session;
 
 class PlantController extends \App\Http\Controllers\Controller
 {
@@ -21,9 +22,8 @@ class PlantController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = ActivePlant::select('activeplants.*');
-            return Datatables::of($data)->make(true);
+        if (! ActivePlant::where('user_id',Auth::id())->first()) {
+            return $this->create();
         }
 
         return view('users.plant.index');
@@ -34,8 +34,10 @@ class PlantController extends \App\Http\Controllers\Controller
         if ($menu == 'plantbyid') {
             $data = Plant::find($id);
         }
-        elseif ('activeplant'){
-            $data = ActivePlant::join('log_plants','log_plants.sensor_id','activeplants.sensor_id')
+        elseif ('activeplant') {
+            $data = ActivePlant::select('log_plants.*','activeplants.*','sensors.type')
+                        ->join('sensors','activeplants.sensor_id','sensors.id')
+                        ->leftJoin('log_plants','log_plants.sensor_id','activeplants.sensor_id')
                         ->where('activeplants.id',$id)
                         ->orderBy('log_plants.id','desc')
                         ->first();
@@ -51,7 +53,7 @@ class PlantController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        //
+        return view('users.form');
     }
 
     /**
@@ -62,7 +64,26 @@ class PlantController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'sensor_id' => 'required|exists:sensors,id',
+            'plant_id' => 'required|exists:plants,id',
+            'name' => 'required',
+            'city' => 'required',
+            'area' => 'nullable|numeric',
+            'capground' => 'nullable|numeric',
+        ]);
+
+        $data = $request->all();
+        $data['user_id'] = Auth::id();
+
+        $db = ActivePlant::create($data);
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('plant.index');
     }
 
     /**
@@ -84,7 +105,9 @@ class PlantController extends \App\Http\Controllers\Controller
      */
     public function edit($id)
     {
-        //
+        $data = ActivePlant::find($id);
+
+        return view('users.form')->with(compact('data'));
     }
 
     /**
@@ -96,7 +119,25 @@ class PlantController extends \App\Http\Controllers\Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'sensor_id' => 'required|exists:sensors,id',
+            'plant_id' => 'required|exists:plants,id',
+            'name' => 'required',
+            'city' => 'required',
+            'area' => 'nullable|numeric',
+            'capground' => 'nullable|numeric',
+        ]);
+
+
+        $db = ActivePlant::find($id);
+        $db->update($request->all());
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('plant.index');
     }
 
     /**
@@ -107,6 +148,14 @@ class PlantController extends \App\Http\Controllers\Controller
      */
     public function destroy($id)
     {
-        //
+        $db = ActivePlant::find($id);
+        $db->delete();
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Hapus"
+        ]);
+
+        return redirect()->route('plant.index');
     }
 }

@@ -20,16 +20,18 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['prefix'=>'admin', 'middleware' => 'auth'], function () {
-	Route::get('legal', 'Admin\LegalController@index')->name('legal.index');
-
-	Route::resource('pegawai', 'Admin\PegawaiController');
-	Route::resource('user', 'Admin\UsersController');
-	Route::resource('plants', 'Admin\PlantsController');
-	Route::resource('finance', 'Admin\FinanceController');
+Route::group(['prefix'=>'settings', 'middleware' => 'auth'], function () {
+	Route::resource('profiles', 'ProfilesController');
 });
 
-Route::group(['prefix'=>'user', 'middleware' => 'auth'], function () {
+Route::group(['prefix'=>'admin', 'middleware' => ['auth','role:admin'] ], function () {
+	Route::resource('user', 'Admin\UsersController');
+	Route::resource('pegawai', 'Admin\PegawaiController');
+	Route::resource('plants', 'Admin\PlantsController');
+	Route::resource('sensors', 'Admin\SensorsController');
+});
+
+Route::group(['prefix'=>'user', 'middleware' => ['auth','role:user'] ], function () {
 
 	Route::get('data/{menu}/{id}','Users\PlantController@data');
 

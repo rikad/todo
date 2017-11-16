@@ -4,26 +4,23 @@
 
 <div class="widget">
   <div class="widget-header"> <i class="icon-user"></i>
-    <h3> Data User</h3>
+    <h3> Data Sensors</h3>
   </div>
   <!-- /widget-header -->
   <div class="widget-content" style="padding-left: 35px">
 
     <div align="right">
-      <a href="{{ route('user.create') }}"><button class="btn btn-primary">Tambah</button></a>
+      <a href="{{ route('sensors.create') }}"><button class="btn btn-primary">Tambah</button></a>
     </div>
     <hr>
 
     <table class="table table-bordered" id="users-table">
       <thead>
         <tr>
-          <th>Id</th>
-          <th>Name</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-          <th>Is Active</th>
+          <th>Serial</th>
+          <th>Password</th>
+          <th>Type</th>
+          <th>User</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -45,9 +42,8 @@
 <script src="{{ asset('js/datatables.min.js') }}"></script>
 
 <script>
-
-  var editPath = '{{ url("/admin/user/") }}/';
-  var deletePath =  '{{ route("user.destroy",'') }}/';
+  var editPath = '{{ url("/admin/sensors/") }}/';
+  var deletePath =  '{{ route("sensors.destroy",'') }}/';
 
   $(function() {
 
@@ -55,26 +51,16 @@
       return editPath+id+'/edit';
     }
 
-
     $('#users-table').DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{!! route('user.index') !!}',
+      ajax: '{!! route('sensors.index') !!}',
       columns: [
-      { data: 'id', name: 'id' },
-      { data: 'name', name: 'name' },
-      { data: 'username', name: 'username' },
-      { data: 'email', name: 'email' },
-      { data: 'created_at', name: 'created_at' },
-      { data: 'updated_at', name: 'updated_at' },
-      { data: 'is_active', name: 'is_active' ,render: function(data) {
-        if (data == 1) {
-          return '<span class="btn btn-small btn-success">Active</span>';
-        } else {
-          return '<span class="btn btn-small btn-danger">Disabled</span>';
-        }
-      }},
-      { data: 'id', name: 'id', render: function(data) {
+      { data: 'serial', password: 'serial' },
+      { data: 'password', password: 'password' },
+      { data: 'type', password: 'type' },
+      { data: 'user', password: 'user' },
+      { data: 'id', password: 'id', render: function(data) {
         return '<a href="'+genEditPath(data)+'"><button class="btn btn-primary btn-sm">Ubah</button></a> <button onclick="deleteData('+data+')" class="btn btn-danger">Hapus</button>';
       }},
       ]
@@ -94,6 +80,6 @@
       }
     }); 
   }
-
 </script>
+
 @endsection

@@ -16,6 +16,7 @@
               <div class="shortcuts">
 
                 <a href="{{ route('home') }}" class="shortcut"><i class="shortcut-icon icon-globe"></i><span class="shortcut-label">Planting Guides</span> </a>
+
                 <a href="{{ route('plant.index') }}" class="shortcut"> <i class="shortcut-icon icon-list-alt"></i><span class="shortcut-label">Field Status</span> </a>
 
                 <a href="{{ route('utilities.index') }}" class="shortcut shortcut-active"><i class="shortcut-icon icon-bookmark"></i><span class="shortcut-label">Utilities</span> </a>
@@ -40,7 +41,7 @@
           <div class="widget">
             <!-- /widget-header -->
             <div class="widget-content">
-
+            <hr>
               <div class="row">
                 <div class="span9">
 
@@ -49,11 +50,14 @@
                 </div>
 
                 <div class="span2" style="text-align: center; padding-top: 5em">
+                  <div style="font-size: 25px; padding: 25px; font-family: Comic Sans MS;">
                   <h3 style="font-size: 25px">Total Water Consumption</h3><br>
-                  <div style="border-radius: 20px; border: 4px solid black; font-size: 25px; padding: 25px">10 L</div>
+                  <i style="text-decoration: underline;">10 L<i>
+                  </div>
                   <br>
                 </div>
               </div>
+            <hr>
 
             </div>
             <!-- /widget-content --> 
@@ -78,6 +82,7 @@
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [
     {
+      label: 'L',
       fillColor: "rgba(151,187,205,0.5)",
       strokeColor: "rgba(151,187,205,1)",
       pointColor: "rgba(151,187,205,1)",

@@ -5,9 +5,6 @@
   <div class="main-inner">
     <div class="container">
 
-      <div class="row">
-        <div class="span12">
-
           <div class="widget">
 
             <div class="widget-content">
@@ -32,26 +29,34 @@
             </div>
             <!-- /widget -->
 
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="span12">
+
+          <div class="row">
+            <div class="col-md-6">
 
           <div class="widget">
-
             <!-- /widget-header -->
-            <div class="widget-content"  style="padding-top: 4em">
+            <div class="widget-content" style="padding-top: 4em;">
               <div id='calendar'>
               </div>
             </div>
             <!-- /widget-content --> 
           </div>
           <!-- /widget -->
+            </div>
+            <div class="col-md-6">
+
+          <div class="widget">
+            <!-- /widget-header -->
+            <div class="widget-content" style="padding-top: 4em; height: 84vh">
 
 
+            </div>
+            <!-- /widget-content --> 
           </div>
-        </div>
+          <!-- /widget -->
+            </div>
+          </div>
 
       </div>
     </div>
@@ -72,7 +77,7 @@
           header: {
             left: 'prev,next today',
             center: 'title',
-            right: 'month,agendaWeek,agendaDay'
+            right: ''
           },
           selectable: true,
           selectHelper: true,
@@ -131,12 +136,6 @@
               end: new Date(y, m, d+1, 22, 30),
               allDay: false
             },
-            {
-              title: 'EGrappler.com',
-              start: new Date(y, m, 28),
-              end: new Date(y, m, 29),
-              url: 'http://EGrappler.com/'
-            }
           ]
         });
       });

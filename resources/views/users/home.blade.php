@@ -42,6 +42,8 @@
             <!-- /widget-header -->
             <div class="widget-content">
 
+            <hr>
+
               <div class="col-md-12">
                 {!! Form::select('plants', [''=>'']+App\Plant::pluck('name','id')->all(), null, ['onchange' => 'changePlant(this.value)', 'class' => 'js-selectize', 'placeholder'=>'Select Plant'] ) !!}
 
@@ -94,7 +96,7 @@
 
                     <img id="gambar" src="{{ asset('img/plants/default.png') }}" class="img-rounded img-responsive">
                     <h3 id="nameLabel"></h3><br>
-                    <button class="btn btn-success btn-lg">Start Plan</button>
+                    <a href="{{ route('plant.create') }}"><button class="btn btn-success btn-lg">Start Plan</button></a>
                   </div>
 
 
@@ -102,7 +104,33 @@
 
                   <hr>
 
-                  <h2 align="center">My Active Plants</h2>
+                  @if(isset($data) && count($data) > 0)
+                  <h2 align="center">My Active Plants</h2><br>
+                    <table class="table table-striped table-bordered">
+                      <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Plant</th>
+                        <th>Area</th>
+                        <th>Capground</th>
+                        <th>Coordinate</th>
+                        <th>Action</th>
+                      </tr>
+                      @foreach($data as $v)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $v->name }}</td>
+                        <td>{{ $v->name }}</td>
+                        <td>{{ $v->area }}</td>
+                        <td>{{ $v->capground }}</td>
+                        <td>{{ $v->city }}</td>
+                        <td><a href="{{ url('/user/plant/') }}/{{ $v->id }}/edit"><button class="btn btn-primary btn-sm">Ubah</button></a> <button onclick="deleteData({{ $v->id }})" class="btn btn-danger">Hapus</button></td>
+                      </tr>
+                      @endforeach
+                    </table>
+
+                  @endif
+
               </div>
 
             </div>
@@ -122,12 +150,10 @@
 @section('css')
 <link href="{{ asset('css/selectize.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ asset('css/selectize.bootstrap3.css') }}" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="{{ asset('css/datatables.min.css') }}">
 @endsection
 
 @section('js')
 <script src="{{ asset('js/selectize.min.js') }}"></script>
-<!-- <script src="{{ asset('js/datatables.min.js') }}"></script> -->
 <script>
 
   $(document).ready(function () {
@@ -198,24 +224,23 @@
     updateStatus(currentPlantId);
   }
 
-  $(function() {
-    $('#users-table').DataTable({
-      processing: true,
-      serverSide: true,
-      ajax: '{!! route('plant.index') !!}',
-      columns: [
-      { data: 'name', name: 'name' },
-      { data: 'area', name: 'area' },
-      { data: 'capground', name: 'capground' },
-      { data: 'city', name: 'city' },
-      { data: 'created_at', name: 'created_at' },
-      { data: 'updated_at', name: 'updated_at' },
-            // { data: 'action', name: 'action' ,render: function() {
-            //   return '<span class="btn btn-small btn-danger">Not Active</span> <button class="btn btn-small btn-info">Enable</button>';
-            // }}
-            ]
-          });
-  });
+  var deletePath =  '{{ route("plant.destroy",'') }}/';
+
+  function deleteData(id) {
+    $.ajax({
+      url: deletePath+id,
+      data: { '_token': '{{ csrf_token() }}' },
+      type: 'DELETE',
+      error: function() {
+        location.reload();
+      },
+      success: function(res) {
+        location.reload();
+      }
+    }); 
+  }
+
+
 
 </script>
 @endsection

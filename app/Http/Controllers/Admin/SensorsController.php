@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\User;
+use App\Sensor;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
 
 
-class UsersController extends \App\Http\Controllers\Controller
+class SensorsController extends \App\Http\Controllers\Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,11 +18,11 @@ class UsersController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::select('users.*');
+            $data = Sensor::select('sensors.*','users.name as user')->join('users','sensors.user_id','users.id');
             return Datatables::of($data)->make(true);
         }
 
-        return view('admin.users.index');
+        return view('admin.sensors.index');
     }
 
     /**
@@ -32,7 +32,7 @@ class UsersController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        return view('admin.users.form');
+        return view('admin.sensors.form');
     }
 
     /**
@@ -44,26 +44,20 @@ class UsersController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'username' => 'required|unique:users,username',
-            'name' => 'required',
+            'user_id' => 'nullable|exists:users,id',
+            'serial' => 'required|unique:sensors,serial',
             'password' => 'required',
-            'role' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'is_active' => 'required|numeric',
+            'type' => 'required',
         ]);
 
-        $data = $request->all();
-        $data['password'] = bcrypt($data['password']);
-        $db = User::create($data);
-
-        $db->attachRole($request->input('role'));
+        $db = Sensor::create($request->all());
 
         Session::flash("status", [
             "level"=>"success",
             "message"=>"Berhasil Di Simpan"
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('sensors.index');
 
     }
 
@@ -86,12 +80,9 @@ class UsersController extends \App\Http\Controllers\Controller
      */
     public function edit($id)
     {
-        $data = User::select('users.id','users.name','users.username','users.is_active','users.email','roles.id as role')
-                ->join('role_user','role_user.user_id','users.id')
-                ->join('roles','role_user.role_id','roles.id')
-                ->find($id);
+        $data = Sensor::find($id);
 
-        return view('admin.users.form')->with(compact('data'));
+        return view('admin.sensors.form')->with(compact('data'));
     }
 
     /**
@@ -104,36 +95,22 @@ class UsersController extends \App\Http\Controllers\Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'username' => 'required|unique:users,username,'.$id,
-            'name' => 'required',
-            'password' => 'nullable',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'is_active' => 'required|numeric',
+            'user_id' => 'nullable|exists:users,id',
+            'serial' => 'required|unique:sensors,serial,'.$id,
+            'password' => 'required',
+            'type' => 'required',
         ]);
 
-        if ($request->input('password') == null) {
-            $data = $request->except('password');
-        } else {
-            $data = $request->all();
-            $data['password'] = bcrypt($data['password']);
-        }
-
-        $db = User::select('users.*','roles.id as role')
-                ->join('role_user','role_user.user_id','users.id')
-                ->join('roles','role_user.role_id','roles.id')
-                ->find($id);
-
-        $db->detachRole($db->role);
-
-        $db->update($data);
-        $db->attachRole($request->input('role'));
+        $db = Sensor::find($id);
+        $db->update($request->all());
 
         Session::flash("status", [
             "level"=>"success",
             "message"=>"Berhasil Di Simpan"
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('sensors.index');
+
     }
 
     /**
@@ -144,7 +121,7 @@ class UsersController extends \App\Http\Controllers\Controller
      */
     public function destroy($id)
     {
-        $db = User::find($id);
+        $db = Sensor::find($id);
         $db->delete();
 
         Session::flash("status", [
@@ -152,6 +129,6 @@ class UsersController extends \App\Http\Controllers\Controller
             "message"=>"Berhasil Di Hapus"
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('sensors.index');
     }
 }

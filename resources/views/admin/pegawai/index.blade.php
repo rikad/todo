@@ -46,9 +46,10 @@
 <script src="{{ asset('js/datatables.min.js') }}"></script>
 
 <script>
+  var editPath = '{{ url("/admin/pegawai/") }}/';
+  var deletePath =  '{{ route("pegawai.destroy",'') }}/';
+
   $(function() {
-    var editPath = '{{ url("/admin/pegawai/") }}/';
-    var deletePath =  '{{ route("pegawai.destroy",'') }}/';
 
     function genEditPath(id) {
       return editPath+id+'/edit';
@@ -68,10 +69,25 @@
       { data: 'department', name: 'department' },
       { data: 'jabatan', name: 'jabatan' },
       { data: 'id', name: 'id', render: function(data) {
-        return '<a href="'+genEditPath(data)+'"><button class="btn btn-primary">Ubah</button></a> <a href="'+deletePath+data+'"><button class="btn btn-danger">Hapus</button></a>';
+        return '<a href="'+genEditPath(data)+'"><button class="btn btn-primary btn-sm">Ubah</button></a> <button onclick="deleteData('+data+')" class="btn btn-danger">Hapus</button>';
       }},
       ]
     });
   });
+
+  function deleteData(id) {
+    $.ajax({
+      url: deletePath+id,
+      data: { '_token': '{{ csrf_token() }}' },
+      type: 'DELETE',
+      error: function() {
+        location.reload();
+      },
+      success: function(res) {
+        location.reload();
+      }
+    }); 
+  }
 </script>
+
 @endsection

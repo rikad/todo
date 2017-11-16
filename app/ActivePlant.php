@@ -10,7 +10,7 @@ class ActivePlant extends Model
 	protected $table = 'activeplants';
 
     protected $fillable = [
-        'user_id','sensor_id','name','tanaman', 'area', 'capground', 'city','created_at','updated_at'
+        'user_id','sensor_id','plant_id','name','tanaman', 'area', 'capground', 'city','created_at','updated_at'
     ];
 
     public function logPlants() {

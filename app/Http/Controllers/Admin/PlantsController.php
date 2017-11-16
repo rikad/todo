@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-
-use Yajra\DataTables\DataTables;
-
 use App\Plant;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Session;
+use File;
+
 
 class PlantsController extends \App\Http\Controllers\Controller
 {
@@ -32,7 +33,7 @@ class PlantsController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        //
+        return view('admin.plants.form');
     }
 
     /**
@@ -43,7 +44,32 @@ class PlantsController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required',
+            'gambar' => 'image|max:1024'
+        ]);
+
+        $db = Plant::create($request->all());
+
+        if ($request->hasFile('gambar')) {
+            //ambbil file upload
+            $uploaded_gambar = $request->file('gambar');
+
+            //buat file random dan extension
+            $filename = $db->id.'.png';
+
+            //menyimpan
+            $destinationPath = public_path() . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 'plants';
+            $uploaded_gambar->move($destinationPath, $filename);
+        }
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('plants.index');
+
     }
 
     /**
@@ -65,7 +91,9 @@ class PlantsController extends \App\Http\Controllers\Controller
      */
     public function edit($id)
     {
-        //
+        $data = Plant::find($id);
+
+        return view('admin.plants.form')->with(compact('data'));
     }
 
     /**
@@ -77,7 +105,33 @@ class PlantsController extends \App\Http\Controllers\Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required',
+            'gambar' => 'image|max:1024'
+        ]);
+
+        $db = Plant::find($id);
+        $db->update($request->all());
+
+        if ($request->hasFile('gambar')) {
+            //ambbil file upload
+            $uploaded_gambar = $request->file('gambar');
+
+            //buat file random dan extension
+            $filename = $id.'.png';
+
+            //menyimpan
+            $destinationPath = public_path() . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 'plants';
+            $uploaded_gambar->move($destinationPath, $filename);
+        }
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('plants.index');
+
     }
 
     /**
@@ -88,6 +142,25 @@ class PlantsController extends \App\Http\Controllers\Controller
      */
     public function destroy($id)
     {
-        //
+        $db = Plant::find($id);
+
+        //hapus cover
+        if(file_exists($filepath = public_path().'/img/plants/'.$id.'.png')) {
+
+            try {
+                File::delete($filepath);
+            } catch (FileNotFoundException $e) {
+                //gagal
+            }
+        }
+
+        $db->delete();
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Hapus"
+        ]);
+
+        return redirect()->route('plants.index');
     }
 }

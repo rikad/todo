@@ -43,14 +43,19 @@ class PegawaiController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-        // $this->validate($request,[
-        //     'title' => 'required|unique:books,title',
-        //     'author_id' => 'required|exists:authors,id',
-        //     'amount' => 'required|numeric',
-        //     'cover' => 'image|max:2048'
-        // ]);
+        $this->validate($request, [
+            'user_id' => 'nullable|exists:users,id',
+            'nip' => 'required|numeric',
+            'name' => 'required',
+            'birthdate' => 'required',
+            'gender' => 'required',
+            'address' => 'required',
+            'phone' => 'required|numeric',
+            'department' => 'nullable',
+            'jabatan' => 'required',
+        ]);
 
-        // $db = Pegawai::create($request->all());
+        $db = Pegawai::create($request->all());
 
         Session::flash("status", [
             "level"=>"success",
@@ -81,6 +86,7 @@ class PegawaiController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         $data = Pegawai::find($id);
+
         return view('admin.pegawai.form')->with(compact('data'));
     }
 
@@ -93,7 +99,28 @@ class PegawaiController extends \App\Http\Controllers\Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'user_id' => 'nullable|exists:users,id',
+            'nip' => 'required|numeric',
+            'name' => 'required',
+            'birthdate' => 'required',
+            'gender' => 'required',
+            'address' => 'required',
+            'phone' => 'required|numeric',
+            'department' => 'nullable',
+            'jabatan' => 'required',
+        ]);
+
+        $db = Pegawai::find($id);
+        $db->update($request->all());
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('pegawai.index');
+
     }
 
     /**
@@ -104,6 +131,14 @@ class PegawaiController extends \App\Http\Controllers\Controller
      */
     public function destroy($id)
     {
-        //
+        $db = Pegawai::find($id);
+        $db->delete();
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Hapus"
+        ]);
+
+        return redirect()->route('pegawai.index');
     }
 }
