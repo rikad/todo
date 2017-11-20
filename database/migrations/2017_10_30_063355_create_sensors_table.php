@@ -25,6 +25,15 @@ class CreateSensorsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
 
+        Schema::create('schedules', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->text('schedule');
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+        });
+
         Schema::create('plants', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name',50);
@@ -111,7 +120,7 @@ class CreateSensorsTable extends Migration
         Schema::dropIfExists('log_plants');
         Schema::dropIfExists('log_powers');
         Schema::dropIfExists('activeplants');
-        Schema::dropIfExists('sensor_user');
+        Schema::dropIfExists('schedules');
         Schema::dropIfExists('sensors');
         Schema::dropIfExists('plants');
     }

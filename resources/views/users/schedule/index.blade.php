@@ -37,8 +37,8 @@
           <div class="widget">
             <!-- /widget-header -->
             <div class="widget-content" style="padding-top: 4em;">
-              <div id='calendar'>
-              </div>
+              <div id='calendar'></div>
+              <hr>
             </div>
             <!-- /widget-content --> 
           </div>
@@ -48,8 +48,27 @@
 
           <div class="widget">
             <!-- /widget-header -->
-            <div class="widget-content" style="padding-top: 4em; height: 84vh">
+            <div class="widget-content" style="padding-top: 4em;">
 
+              <h3 style="text-align: center;">Todo Schedule</h3>
+              <hr>
+              <table id="todoTable" class="table table-striped">
+              @if(!$data)
+              <p align="center">Belum Ada Data</p>
+              @else
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>                
+              </thead>
+              <tbody id="konten">
+              </tbody>
+              @endif
+              </table>
+              <hr>
+              <p align="right">* Checklist jika sudah selesai</p>
 
             </div>
             <!-- /widget-content --> 
@@ -65,80 +84,145 @@
   @endsection
 
   @section('js')
-  <script type="text/javascript" src="js/full-calendar/fullcalendar.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/full-calendar/fullcalendar.min.js') }}"></script>
 
-  <script>     
-        $(document).ready(function() {
-        var date = new Date();
-        var d = date.getDate();
-        var m = date.getMonth();
-        var y = date.getFullYear();
-        var calendar = $('#calendar').fullCalendar({
-          header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: ''
-          },
-          selectable: true,
-          selectHelper: true,
-          select: function(start, end, allDay) {
-            var title = prompt('Event Title:');
-            if (title) {
-              calendar.fullCalendar('renderEvent',
-                {
-                  title: title,
-                  start: start,
-                  end: end,
-                  allDay: allDay
-                },
-                true // make the event "stick"
-              );
-            }
-            calendar.fullCalendar('unselect');
-          },
-          editable: true,
-          events: [
+<script>  
+    var date = new Date();
+    var d = date.getDate();
+    var m = date.getMonth();
+    var y = date.getFullYear();
+
+@if($data)
+var schedule = {!! $data->schedule !!};
+var schedule2 = {!! $data->schedule !!};
+@else
+var schedule = [];
+var schedule2 = [];
+@endif
+
+  function loadTodo() {
+
+    var konten = document.getElementById('konten');
+
+
+    konten.innerHTML = ''; //reset table data
+
+
+    function createRow(vid,vtitle,vdate) {
+      var action = document.createElement("td");
+      var title = document.createElement("td");
+      var date = document.createElement("td");
+      var tr = document.createElement("tr");
+      var box = document.createElement('span');
+
+      box = '<input type="checkbox" onchange="removeSchedule('+vid+')">';
+
+      title.innerText = vtitle;
+      action.innerHTML = box;
+      date.innerText = vdate;
+      tr.appendChild(title);
+      tr.appendChild(date);
+      tr.appendChild(action);
+      
+      konten.appendChild(tr);
+    }
+
+    function formatDate(date) {
+      date = new Date(date);
+      return date.getDate() +'/'+date.getMonth()+'/'+date.getFullYear();
+    }
+
+    for (var i = 0; i < schedule.length; i++) {
+      var date = schedule[i].end == undefined ? formatDate(schedule[i].start) : formatDate(schedule[i].start) + ' - ' + formatDate(schedule[i].end);
+      createRow(i,schedule[i].title,date);
+    }
+
+  }
+
+  loadTodo();
+
+
+  function removeSchedule(id) {
+    schedule.splice(id,1);
+    schedule2.splice(id,1);
+    loadTodo();
+    loadCalendar();
+    saveSchedule();
+  }
+  function addSchedule(title, start, end, allDay) {
+    start.setHours(23);
+    end.setHours(23);
+
+    schedule.push(
+      {
+        title: title,
+        start: start,
+        end: end,
+        allDay: allDay
+      }
+    );
+    schedule2.push(
+      {
+        title: title,
+        start: start,
+        end: end,
+        allDay: allDay
+      }
+    );
+    loadTodo();
+    saveSchedule();
+  }
+
+  function loadCalendar() {
+
+    var calendar = $('#calendar');
+    calendar.empty(); // reset
+
+    calendar.fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: ''
+      },
+      selectable: true,
+      selectHelper: true,
+      select: function(start, end, allDay) {
+        var title = prompt('Event Title:');
+        if (title) {
+          addSchedule(title,start,end,allDay);
+          calendar.fullCalendar('renderEvent',
             {
-              title: 'All Day Event',
-              start: new Date(y, m, 1)
+              title: title,
+              start: start,
+              end: end,
+              allDay: allDay
             },
-            {
-              title: 'Long Event',
-              start: new Date(y, m, d+5),
-              end: new Date(y, m, d+7)
-            },
-            {
-              id: 999,
-              title: 'Repeating Event',
-              start: new Date(y, m, d-3, 16, 0),
-              allDay: false
-            },
-            {
-              id: 999,
-              title: 'Repeating Event',
-              start: new Date(y, m, d+4, 16, 0),
-              allDay: false
-            },
-            {
-              title: 'Meeting',
-              start: new Date(y, m, d, 10, 30),
-              allDay: false
-            },
-            {
-              title: 'Lunch',
-              start: new Date(y, m, d, 12, 0),
-              end: new Date(y, m, d, 14, 0),
-              allDay: false
-            },
-            {
-              title: 'Birthday Party',
-              start: new Date(y, m, d+1, 19, 0),
-              end: new Date(y, m, d+1, 22, 30),
-              allDay: false
-            },
-          ]
-        });
-      });
+            true // make the event "stick"
+          );
+        }
+        calendar.fullCalendar('unselect');
+      },
+      editable: true,
+      events: schedule2
+    });
+
+  }
+  loadCalendar();
+
+  function saveSchedule() {
+    
+    $.ajax({
+      url: "{{ route('schedule.create') }}",
+      data: { 'schedule': JSON.stringify(schedule) },
+      type: 'GET',
+      error: function() {
+        alert('Gagal di simpan, silahkan coba lagi');
+      },
+      success: function(res) {
+        alert('Berhasil di simpan');
+      }
+    }); 
+  }
 
   </script>
   @endsection

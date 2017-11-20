@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Users;
 
 use Illuminate\Http\Request;
+use App\Schedule;
+use Auth;
 
 class ScheduleController extends \App\Http\Controllers\Controller
 {
@@ -13,7 +15,8 @@ class ScheduleController extends \App\Http\Controllers\Controller
      */
     public function index()
     {
-        return view('users.schedule.index');
+        $data = Schedule::where('user_id',Auth::id())->first();
+        return view('users.schedule.index',['data'=>$data]);
     }
 
     /**
@@ -21,9 +24,9 @@ class ScheduleController extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        Schedule::updateOrCreate(['user_id'=>Auth::id()],['schedule'=>$request->input('schedule')]);
     }
 
     /**
@@ -34,7 +37,6 @@ class ScheduleController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
