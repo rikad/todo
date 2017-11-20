@@ -1,0 +1,32 @@
+*API BIOPS DOC
+
+
+METHOD PATH{param} PARAMETER(type),PARAMETER(type),* | optional
+
+**get password/login
+get /api/v1/getToken?username=sample&password=sample
+
+**profile API
+get /api/v1/
+get /api/v1/profile
+get /api/v1/changeprofile name(string),username(string),email(string)
+get /api/v1/changepassword password(string)
+
+**Data API
+get /api/v1/plants
+get /api/v1/sensors
+
+**ActivePlant API
+get /api/v1/activeplants
+post /api/v1/activeplants sensor_id(int required),plant_id(int required),name(string required),city(string "longitude,latitude"),area(numeric),capground(numeric) | activeplant_id(int {jika akan edit wajib dengan paramater ini})
+delete /api/v1/activeplants/{activeplant_id}
+
+**Log API
+get /api/v1/logplants sensor_id(int)
+get /api/v1/logwaters activeplant_id(int),mode(string between 'week/month/year'),date(date yyyymmdd)
+
+**Schedule API
+get /api/v1/schedules
+get /api/v1/updateSchedules schedule(json)
+
+

@@ -45,8 +45,25 @@ Route::group(['prefix'=>'api/v1'], function () {
 	Route::get('getToken', 'Api\GetTokenController@index')->name('v1.getToken');
 
 	Route::group(['middleware'=>['jwt.auth']], function () {
-		Route::resource('riwayat', 'Api\RiwayatController');
-		Route::resource('profile', 'Api\ProfileController');
+
+		Route::get('/','Api\ProfileController@index');
+		Route::get('/profile','Api\ProfileController@index');
+		Route::post('/changeprofile','Api\ProfileController@changeProfile');
+		Route::post('/changepassword','Api\ProfileController@changePassword');
+		
+		Route::get('plants','Api\PlantController@plants');
+		Route::get('sensors','Api\PlantController@sensors');
+
+		Route::get('activeplants','Api\PlantController@activeplants');
+		Route::post('activeplants','Api\PlantController@addactiveplants');
+		Route::delete('activeplants/{id}','Api\PlantController@deleteactiveplants');
+
+		Route::get('logplants','Api\PlantController@logplants');
+		Route::get('logwaters','Api\PlantController@logwaters');
+
+		Route::get('schedules','Api\PlantController@schedules');
+		Route::post('schedules','Api\PlantController@updateSchedules');
+
 	});
 });
 

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use JWTAuth;
+use DB;
+use App\User;
+use Validator;
 
 class ProfileController extends \App\Http\Controllers\Controller
 {
@@ -13,72 +17,94 @@ class ProfileController extends \App\Http\Controllers\Controller
      */
     public function index()
     {
-        return 'profile';
+        $output = [
+            'status' => false,
+            'message' => '',
+            'data' => ''
+        ];
+
+        try {
+
+            $data = JWTAuth::parseToken()->authenticate();
+
+            $output['status'] = true;
+            $output['data'] = $data;
+
+        } catch (\Exception $e) {
+            $output['message'] = $e->getMessage();
+        }
+
+        return $output;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function changePassword(Request $request) {
+
+        $output = [
+            'status' => false,
+            'message' => '',
+            'data' => ''
+        ];
+
+        try {
+            $data = [];
+
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if ($request->password != null) {
+                $data['password'] = bcrypt($request->password);
+
+                $user->update($data);
+            } else {
+                throw new \Exception("Password Kosong");
+                
+            }
+
+            $output['status'] = true;
+            $output['message'] = 'Password Berhasil di Ganti';
+
+        } catch (\Exception $e) {
+            $output['message'] = $e->getMessage();
+        }
+
+        return $output;
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function changeProfile(Request $request) {
+
+        $output = [
+            'status' => false,
+            'message' => '',
+            'data' => ''
+        ];
+
+        try {
+
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $validation = Validator::make($request->all(),[ 
+                'username' => 'required|unique:users,username,'.$user->id,
+                'name' => 'required',
+                'password' => 'nullable',
+                'email' => 'required|email|unique:users,email,'.$user->id,
+            ]);
+
+            if($validation->fails()){
+                throw new \Exception($validation->errors());
+            }
+
+            $db = User::find($user->id);
+            $db->update($request->all());
+
+            $output['status'] = true;
+            $output['message'] = 'Berhasil Di Simpan';
+
+        } catch (\Exception $e) {
+            $output['message'] = json_decode($e->getMessage());
+        }
+
+        return $output;
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
