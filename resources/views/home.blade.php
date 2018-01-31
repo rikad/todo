@@ -1,90 +1,133 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="main">
-  <div class="main-inner">
-    <div class="container">
 
-      <div class="row">
-        <div class="span12">
+<div class="container-fluid">
+  <div class="block-header">
+    <h2>DASHBOARD</h2>
+  </div>
 
-          <div class="widget widget-nopad">
-            <div class="widget-header"> <i class="icon-list-alt"></i>
-              <h3> Today's Stats</h3>
-            </div>
-            <!-- /widget-header -->
-            <div class="widget-content">
-              <div class="widget big-stats-container">
-                <div class="widget-content">
-
-                  <div id="big_stats" class="cf">
-                    <div class="stat"> <i class="icon-anchor"></i> <span class="value">851</span> </div>
-                    <!-- .stat -->
-                    
-                    <div class="stat"> <i class="icon-thumbs-up-alt"></i> <span class="value">423</span> </div>
-                    <!-- .stat -->
-                    
-                    <div class="stat"> <i class="icon-twitter-sign"></i> <span class="value">922</span> </div>
-                    <!-- .stat -->
-                    
-                    <div class="stat"> <i class="icon-bullhorn"></i> <span class="value">25%</span> </div>
-                    <!-- .stat --> 
-                  </div>
-                </div>
-                <!-- /widget-content --> 
-                
-              </div>
-            </div>
-          </div>
-          <!-- /widget -->
-
+  <!-- Widgets -->
+  <div class="row clearfix">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+      <div class="info-box bg-blue hover-expand-effect">
+        <div class="icon">
+          <i class="material-icons">playlist_add_check</i>
+        </div>
+        <div class="content">
+          <div class="text">Barang</div>
+          <div class="number count-to" data-from="0" data-to="125" data-speed="15" data-fresh-interval="20">{{ \App\Asset::count() }}</div>
         </div>
       </div>
-
-      <div class="row">
-        <div class="span12">
-
-          <div class="widget widget-nopad">
-            <div class="widget-header"> <i class="icon-list-alt"></i>
-              <h3> Recent News</h3>
-            </div>
-            <!-- /widget-header -->
-            <div class="widget-content">
-              <ul class="news-items">
-                <li>
-                  
-                  <div class="news-item-date"> <span class="news-item-day">29</span> <span class="news-item-month">Aug</span> </div>
-                  <div class="news-item-detail"> <a href="http://www.egrappler.com/thursday-roundup-40/" class="news-item-title" target="_blank">Thursday Roundup # 40</a>
-                    <p class="news-item-preview"> This is our web design and development news series where we share our favorite design/development related articles, resources, tutorials and awesome freebies. </p>
-                  </div>
-                  
-                </li>
-                <li>
-                  
-                  <div class="news-item-date"> <span class="news-item-day">15</span> <span class="news-item-month">Jun</span> </div>
-                  <div class="news-item-detail"> <a href="http://www.egrappler.com/retina-ready-responsive-app-landing-page-website-template-app-landing/" class="news-item-title" target="_blank">Retina Ready Responsive App Landing Page Website Template – App Landing</a>
-                    <p class="news-item-preview"> App Landing is a retina ready responsive app landing page website template perfect for software and application developers and small business owners looking to promote their iPhone, iPad, Android Apps and software products.</p>
-                  </div>
-                  
-                </li>
-                <li>
-                  
-                  <div class="news-item-date"> <span class="news-item-day">29</span> <span class="news-item-month">Oct</span> </div>
-                  <div class="news-item-detail"> <a href="http://www.egrappler.com/open-source-jquery-php-ajax-contact-form-templates-with-captcha-formify/" class="news-item-title" target="_blank">Open Source jQuery PHP Ajax Contact Form Templates With Captcha: Formify</a>
-                    <p class="news-item-preview"> Formify is a contribution to lessen the pain of creating contact forms. The collection contains six different forms that are commonly used. These open source contact forms can be customized as well to suit the need for your website/application.</p>
-                  </div>
-                  
-                </li>
-              </ul>
-            </div>
-            <!-- /widget-content --> 
-          </div>
-          <!-- /widget -->
-
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+      <div class="info-box bg-cyan hover-expand-effect">
+        <div class="icon">
+          <i class="material-icons">room</i>
+        </div>
+        <div class="content">
+          <div class="text">Ruangan</div>
+          <div class="number count-to">{{ \App\Room::count() }}</div>
         </div>
       </div>
-
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+      <div class="info-box bg-teal hover-expand-effect">
+        <div class="icon">
+          <i class="material-icons">forum</i>
+        </div>
+        <div class="content">
+          <div class="text">Peminjaman</div>
+          <div class="number count-to" data-from="0" data-to="243" data-speed="1000" data-fresh-interval="20">{{ \App\AssetDetail::where('user_id','<>','NULL')->count() }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+      <div class="info-box bg-blue-grey hover-expand-effect">
+        <div class="icon">
+          <i class="material-icons">person_add</i>
+        </div>
+        <div class="content">
+          <div class="text">Users</div>
+          <div class="number count-to" data-from="0" data-to="1225" data-speed="1000" data-fresh-interval="20">{{ \App\User::count() }}</div>
+        </div>
+      </div>
     </div>
   </div>
+  <!-- #END# Widgets -->
+
+  <div class="row clearfix">
+    <!-- Visitors -->
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+      <div class="card">
+        <div class="body bg-blue">
+        <div class="m-b--35 font-bold">5 Barang Baru Terakhir</div>
+        <ul class="dashboard-stat-list">
+        @foreach(\App\Asset::select(DB::raw('COUNT(assets.id) as jumlah'),'assets.*')->join('asset_details','asset_details.asset_id','assets.id')
+                    ->groupBy('assets.id')->limit(5)->get() as $v)
+          <li>
+            <a href="{{ route('assets.show',$v->id) }}" style="color: white">{{ $v->name }}</a>
+            <span class="pull-right"><b>{{ $v->jumlah }}</b> <small>BUAH</small></span>
+          </li>
+        @endforeach
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- #END# Visitors -->
+  <!-- Latest Social Trends -->
+  <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+    <div class="card">
+      <div class="body bg-cyan">
+        <div class="m-b--35 font-bold">Dokumen Teknik Fisika</div>
+        <ul class="dashboard-stat-list">
+          <li>
+            <a href="#" style="text-decoration: none; color: white">Bebas Pinjam Wis April 2018.docx</a>
+            <span class="pull-right">
+              <i class="material-icons">insert_drive_file</i>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- #END# Latest Social Trends -->
+  <!-- Answered Tickets -->
+  <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+    <div class="card">
+      <div class="body bg-teal">
+        <div class="font-bold m-b--35">ANSWERED TICKETS</div>
+        <ul class="dashboard-stat-list">
+          <li>
+            TODAY
+            <span class="pull-right"><b>12</b> <small>TICKETS</small></span>
+          </li>
+          <li>
+            YESTERDAY
+            <span class="pull-right"><b>15</b> <small>TICKETS</small></span>
+          </li>
+          <li>
+            LAST WEEK
+            <span class="pull-right"><b>90</b> <small>TICKETS</small></span>
+          </li>
+          <li>
+            LAST MONTH
+            <span class="pull-right"><b>342</b> <small>TICKETS</small></span>
+          </li>
+          <li>
+            LAST YEAR
+            <span class="pull-right"><b>4 225</b> <small>TICKETS</small></span>
+          </li>
+          <li>
+            ALL
+            <span class="pull-right"><b>8 752</b> <small>TICKETS</small></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- #END# Answered Tickets -->
+</div>
+
 </div>
 @endsection

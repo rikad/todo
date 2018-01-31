@@ -29,19 +29,8 @@ class HomeController extends Controller
     public function index()
     {
 
-        if (Auth::user()->hasRole('admin')) {
-            return view('admin/home');
-        } else {
-            $data = $this->users();
 
-            return view('users/home',['data' => $data]);
-        }
+        return view('users/home',['data' => $data]);
     }
 
-    public function users() { 
-
-        $main = ActivePlant::where('activeplants.user_id',Auth::id())->get();
-
-        return $main;
-    }
 }

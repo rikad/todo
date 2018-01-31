@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\AssetDetail;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
+use DB;
+use Auth;
+use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 
 class UsersController extends \App\Http\Controllers\Controller
@@ -18,11 +22,24 @@ class UsersController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::select('users.*');
+
+            DB::statement(DB::raw('set @rownum=0'));
+            $data = User::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'users.*');
+
+            if ($request->input('type')) {
+                $data->join('role_user','role_user.user_id','users.id');
+                $data->join('roles','role_user.role_id','roles.id');
+                $data->where('roles.name',$request->input('type'));
+
+                if ($request->input('angkatan')) {
+                    $data->where(DB::raw('MID(users.noid,4,2)'),substr($request->input('angkatan'), 2));
+                }
+            }
+
             return Datatables::of($data)->make(true);
         }
 
-        return view('admin.users.index');
+        return view('users.index');
     }
 
     /**
@@ -32,7 +49,19 @@ class UsersController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        return view('admin.users.form');
+        return view('users.form');
+    }
+
+
+    public function setFBP(Request $request)
+    {
+        $fileenv = DotenvEditor::load();
+        $fileenv->setKey('APP_SASPRA',$request->input('saspra'));
+        $fileenv->setKey('APP_PERPUS',$request->input('perpus'));
+        $fileenv->setKey('APP_PRODI',$request->input('prodi'));
+        $fileenv->save();
+
+        return 'ok';
     }
 
     /**
@@ -43,6 +72,21 @@ class UsersController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
+        if ($request->input('import')) {
+            $import = json_decode($request->input('import'));
+
+
+            foreach ($import as $key => $value) {
+                $tmp = (array) $value;
+                $tmp['password'] = bcrypt($tmp['password']);
+                $tmp['desc'] = json_encode($tmp['desc']);
+                $db = User::create($tmp);
+                $db->attachRole($request->input('role'));
+            }
+
+            return 'ok';
+        }
+
         $this->validate($request, [
             'username' => 'required|unique:users,username',
             'name' => 'required',
@@ -63,7 +107,7 @@ class UsersController extends \App\Http\Controllers\Controller
             "message"=>"Berhasil Di Simpan"
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('users.index');
 
     }
 
@@ -73,9 +117,54 @@ class UsersController extends \App\Http\Controllers\Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id,Request $request)
     {
-        //
+
+        $data = User::find($id);
+        $detail = AssetDetail::select('asset_details.*',DB::raw('IF(asset_details.condition=0 ,"Baik",IF(asset_details.condition=1,"Rusak Ringan","Rusak Berat")) AS conditionText'), 'rooms.name as roomName', 'assets.name')
+            ->join('assets','assets.id','asset_details.asset_id')
+            ->join('users','users.id','asset_details.user_id')
+            ->leftJoin('rooms','rooms.id','asset_details.room_id')
+            ->where('asset_details.user_id',$id)->get();
+
+        $fileenv = DotenvEditor::load();
+        $saspra = $fileenv->getValue('APP_SASPRA');
+        $perpus = $fileenv->getValue('APP_PERPUS');
+        $prodi = $fileenv->getValue('APP_PRODI');
+
+        $output = [
+            'data'=>$data,
+            'detail'=>$detail,
+            'saspra'=>$saspra,
+            'perpus'=>$perpus,
+            'prodi'=>$prodi,
+        ];
+
+
+        //response section
+        if (Auth::check()) {
+            if (Auth::user()->can('read-users') || Auth::user()->can('read-mahasiswa')) {
+
+                if ($request->ajax()) {
+                    //form bebas pinjam check
+                    $cek = assetDetail::where('user_id',$id)->get();
+
+                    if (count($cek) > 0) {
+                        return 'not-ok';
+                    }
+
+                    return $output;
+                }
+
+                return view('users.show',$output);
+            } else {
+                return view('users.showPublic',$output);
+                
+            }
+        }
+        else {
+            return view('users.showPublic',$output);
+        }
     }
 
     /**
@@ -91,7 +180,7 @@ class UsersController extends \App\Http\Controllers\Controller
                 ->join('roles','role_user.role_id','roles.id')
                 ->find($id);
 
-        return view('admin.users.form')->with(compact('data'));
+        return view('users.form')->with(compact('data'));
     }
 
     /**
@@ -133,7 +222,7 @@ class UsersController extends \App\Http\Controllers\Controller
             "message"=>"Berhasil Di Simpan"
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('users.index');
     }
 
     /**
@@ -148,10 +237,10 @@ class UsersController extends \App\Http\Controllers\Controller
         $db->delete();
 
         Session::flash("status", [
-            "level"=>"success",
+            "level"=>"danger",
             "message"=>"Berhasil Di Hapus"
         ]);
 
-        return redirect()->route('user.index');
+        return 'ok';
     }
 }

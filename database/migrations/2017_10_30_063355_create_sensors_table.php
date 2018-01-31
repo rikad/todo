@@ -14,97 +14,52 @@ class CreateSensorsTable extends Migration
     public function up()
     {
 
-        Schema::create('sensors', function (Blueprint $table) {
+        Schema::create('rooms', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            $table->string('serial',20);
-            $table->string('password',20);
-            $table->string('type',10);
+            $table->string('code',20);
+            $table->string('code2',20);
+            $table->string('name',80);
+            $table->text('description')->nullable();
             $table->timestamps(); 
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
 
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('assets', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->text('schedule');
-            $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-        });
-
-        Schema::create('plants', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name',50);
-            $table->integer('umur1')->nullable();
-            $table->integer('umur2')->nullable();
-            $table->integer('umur3')->nullable();
-            $table->integer('umur4')->nullable();
-            $table->float('kc1')->nullable();
-            $table->float('kc2')->nullable();
-            $table->float('kc3')->nullable();
-            $table->float('kc4')->nullable();
-            $table->integer('tmin')->nullable();
-            $table->integer('tmax')->nullable();
-            $table->integer('hmin')->nullable();
-            $table->integer('hmax')->nullable();
-            $table->integer('imin')->nullable();
-            $table->integer('imax')->nullable();
-            $table->integer('panenmin')->nullable();
-            $table->integer('panenmax')->nullable();
-            $table->string('climate',20)->nullable();
-            $table->integer('distancemin')->nullable();
-            $table->integer('distancemax')->nullable();
-            $table->integer('depthmin')->nullable();
-            $table->integer('depthmax')->nullable();
+            $table->string('name');
+            $table->string('image')->nullable();
+            $table->string('type');
+            $table->text('spesification')->nullable();
+            $table->text('description')->nullable();
+            $table->boolean('category')->default(true);
             $table->timestamps();
         });
 
-        Schema::create('activeplants', function (Blueprint $table) {
+        Schema::create('asset_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('sensor_id');
-            $table->unsignedinteger('plant_id');
-            $table->string('name',50);
-            $table->integer('area')->nullable();
-            $table->integer('capground')->nullable();
-            $table->string('city')->nullable();
+            $table->unsignedInteger('asset_id');
+            $table->unsignedInteger('room_id')->nullable(); // alokasi
+            $table->unsignedInteger('user_id')->nullable(); // peminjam
+            $table->string('year',6);
+            $table->string('no_po',20);
+            $table->string('no_bst',20);
+            $table->string('serial',20);
+            $table->string('sourcefund',20);
+            $table->unsignedInteger('price')->nullable();
+            $table->unsignedInteger('condition');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('sensor_id')->references('id')->on('sensors')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('plant_id')->references('id')->on('plants')->onUpdate('cascade')->onDelete('cascade');
-
+            $table->foreign('asset_id')->references('id')->on('assets')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('room_id')->references('id')->on('rooms')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('restrict');
         });
 
-        Schema::create('log_plants', function (Blueprint $table) {
+        Schema::create('plans', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('sensor_id');
-            $table->float('temperature')->nullable();
-            $table->float('humidity')->nullable();
-            $table->float('shumidity')->nullable();
-            $table->integer('intensity')->nullable();
-            $table->float('ph')->nullable();
-            $table->float('ec')->nullable();
-            $table->float('vwind')->nullable();
-            $table->integer('pressure')->nullable();
-            $table->integer('rssi')->nullable();
+            $table->json('data');
             $table->timestamps();
-
-           $table->foreign('sensor_id')->references('id')->on('sensors')
-                ->onUpdate('cascade')->onDelete('cascade');
-        });
-
-        Schema::create('log_powers', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('activeplant_id');
-            $table->float('water');
-            $table->float('power');
-            $table->timestamps();
-
-           $table->foreign('activeplant_id')->references('id')->on('activeplants')
-                ->onUpdate('cascade')->onDelete('cascade');
         });
 
     }
@@ -116,12 +71,9 @@ class CreateSensorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pegawai');
-        Schema::dropIfExists('log_plants');
-        Schema::dropIfExists('log_powers');
-        Schema::dropIfExists('activeplants');
-        Schema::dropIfExists('schedules');
-        Schema::dropIfExists('sensors');
-        Schema::dropIfExists('plants');
+        Schema::dropIfExists('asset_details');
+        Schema::dropIfExists('assets');
+        Schema::dropIfExists('plans');
+        Schema::dropIfExists('rooms');
     }
 }

@@ -15,28 +15,17 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('username')->unique();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('noid',30)->nullable()->unique();
+            $table->string('username',20)->unique();
+            $table->string('name',60);
+            $table->string('email',60)->unique();
             $table->string('password');
+            $table->string('address')->nullable();
+            $table->string('phone',20)->nullable();
+            $table->text('desc')->nullable(); //will json
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
-        });
-
-        Schema::create('pegawai', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('user_id')->nullable();;
-            $table->string('nip',20)->unique();
-            $table->string('name',20);
-            $table->date('birthdate')->nullable();
-            $table->string('gender',1)->nullable();
-            $table->string('address')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('department')->nullable();
-            $table->string('jabatan')->nullable();
-            $table->timestamps();
-
         });
     }
 
@@ -47,7 +36,7 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pegawai');
+        Schema::dropIfExists('rooms');
         Schema::dropIfExists('users');
     }
 }

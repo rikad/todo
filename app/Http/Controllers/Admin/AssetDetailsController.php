@@ -1,0 +1,253 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Http\Request;
+use App\AssetDetail;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Session;
+use DB;
+use Image;
+use DNS1D;
+use DNS2D;
+
+
+class AssetDetailsController extends \App\Http\Controllers\Controller
+{
+
+
+    private $validationRule = [
+                'serial' => 'required',
+                'no_po' => 'required',
+                'no_bst' => 'required',
+                'sourcefund' => 'required',
+                'price' => 'required',
+                'year' => 'required',
+                'condition' => 'required',
+            ];
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+
+        if ($request->ajax()) {
+            DB::statement(DB::raw('set @rownum=0'));
+            $data = AssetDetail::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'assets.*');
+            return Datatables::of($data)->make(true);
+        }
+
+        return view('assets.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('assets.form');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
+        $this->validate($request, $this->validationRule);
+
+        $data = $request->all();
+
+        AssetDetailDetail::create($data);
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('assets.index');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id,Request $request)
+    {
+
+        $data = AssetDetail::select('asset_details.*','assets.id as idAsset','assets.name','assets.type')->join('assets','assets.id','asset_details.asset_id')->find($id);
+
+        return response()->download($this->barcode($data), $data->serial.$data->id.'.png');
+    }
+
+    public function barcode($data) {
+        $path = public_path() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'barcode';
+        $base = Image::make($path.DIRECTORY_SEPARATOR.'base.jpg');
+        $logo = Image::make($path.DIRECTORY_SEPARATOR.'logo.png');
+        $qrcodetext = route('assets.showPublic',$data->idAsset);
+        $qrcodeimage = Image::make(DNS2D::getBarcodePNG($qrcodetext, "QRCODE"));
+        $qrcodefinal = Image::canvas(65, 65, '#fff');
+        $barcode = Image::make(DNS1D::getBarcodePNG($data->serial,"C128", 3, 33));
+
+
+        $base->resize(320, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $qrcodeimage->resize(62, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        if ($barcode->width() > 210) {
+            $barcode->resize(210, 30);
+        }
+
+        $qrcodefinal->insert($qrcodeimage, 'center');
+
+        $logo->resize(55, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $left = $logo->width() + 25;
+
+        // write text at position
+        $base->insert($logo,'top-left',20,30);
+        $base->insert($qrcodefinal,'bottom-left',4,6);
+        $base->insert($barcode,'top-left',$left,50);
+
+        $base->text('Sarana Prasarana Teknik Fisika FTI - ITB', $left, 40, function($font) {
+            $path = public_path() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'barcode';
+            $ttf = $path.DIRECTORY_SEPARATOR.'OpenSans-Regular.ttf';
+            $font->file($ttf);
+            $font->size(12);
+            $font->color('#000');
+        });
+
+        $leftSerial = $barcode->width() < 210 ? $barcode->width() : 210;
+        $base->text($data->serial, $leftSerial / 2 + $left, 95, function($font) {
+            $path = public_path() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'barcode';
+            $ttf = $path.DIRECTORY_SEPARATOR.'OpenSans-Regular.ttf';
+            $font->file($ttf);
+            $font->size(12);
+            $font->color('#000');
+            $font->align('center');
+        });
+
+        $base->text($data->name, $left, 120, function($font) {
+            $path = public_path() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'barcode';
+            $ttf = $path.DIRECTORY_SEPARATOR.'OpenSans-Regular.ttf';
+            $font->file($ttf);
+            $font->size(12);
+            $font->color('#000');
+        });
+
+        $base->text($data->type, $left, 140, function($font) {
+            $path = public_path() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'barcode';
+            $ttf = $path.DIRECTORY_SEPARATOR.'OpenSans-Regular.ttf';
+            $font->file($ttf);
+            $font->size(12);
+            $font->color('#000');
+        });
+
+        $base->text($data->sourcefund, $left, 160, function($font) {
+            $path = public_path() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'barcode';
+            $ttf = $path.DIRECTORY_SEPARATOR.'OpenSans-Regular.ttf';
+            $font->file($ttf);
+            $font->size(12);
+            $font->color('#000');
+        });
+
+        $base->text($data->year, $left, 180, function($font) {
+            $path = public_path() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'barcode';
+            $ttf = $path.DIRECTORY_SEPARATOR.'OpenSans-Regular.ttf';
+            $font->file($ttf);
+            $font->size(12);
+            $font->color('#000');
+        });
+
+        //save
+        $output = $path.DIRECTORY_SEPARATOR.$data->id.'.png';
+        $base->save($output);
+
+        return $output;
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $data = AssetDetail::find($id);
+
+        return view('assets.editDetail')->with(compact('data'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            //if ajax (return asset or alocation) dont validate
+            $data = $request->all();
+            $db = AssetDetail::find($id);
+            $db->update($data);
+
+            return 'ok';
+
+        } else {
+            $this->validate($request, $this->validationRule);
+        }
+
+
+        $data = $request->all();
+
+        $db = AssetDetail::find($id);
+
+        $db->update($data);
+
+        Session::flash("status", [
+            "level"=>"success",
+            "message"=>"Berhasil Di Simpan"
+        ]);
+
+        return redirect()->route('assets.show',$db->asset_id);
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $db = AssetDetail::find($id);
+        $db->delete();
+
+        Session::flash("status", [
+            "level"=>"danger",
+            "message"=>"Berhasil Di Hapus"
+        ]);
+
+        return 'ok';
+    }
+
+}
