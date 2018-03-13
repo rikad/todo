@@ -245,9 +245,7 @@
         ],
         columns: [
             {
-              data: 'serial',
-              type: 'numeric',
-              width: 100
+              data: 'serial'
             },{
               data: 'no_po',
               type: 'numeric',
