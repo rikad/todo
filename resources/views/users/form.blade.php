@@ -13,7 +13,12 @@
       <div class="card">
         <div class="header">
           <h2>
+            @if(isset($data))
+            Edit Pengguna
+            @else
             Tambah Pengguna
+            @endif
+
           </h2>
         </div>
         <div class="body">
@@ -95,6 +100,122 @@
                 </div>
               </div>
             </div>
+
+
+          @if($data->role == 4)
+          @php
+            $desc = json_decode($data->desc); 
+          @endphp
+
+            <div class="row clearfix">
+              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                <label for="wali">Wali</label>
+              </div>
+              <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                <div class="form-group">
+                  <div class="form-line{{ $errors->has('wali') ? ' error' : '' }}">
+                    {!! Form::text('wali', $desc->wali, ['class'=>'form-control']) !!}
+                  </div>
+                  @if ($errors->has('wali'))
+                      <label class="error" for="wali">
+                          {{ $errors->first('wali') }}
+                      </label>
+                  @endif
+                </div>
+              </div>
+            </div>
+
+            <div class="row clearfix">
+              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                <label for="pembimbing1">Pembimbing 1</label>
+              </div>
+              <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                <div class="form-group">
+                  <div class="form-line{{ $errors->has('pembimbing1') ? ' error' : '' }}">
+                    {!! Form::text('pembimbing1', $desc->pembimbing1, ['class'=>'form-control']) !!}
+                  </div>
+                  @if ($errors->has('pembimbing1'))
+                      <label class="error" for="pembimbing1">
+                          {{ $errors->first('pembimbing1') }}
+                      </label>
+                  @endif
+                </div>
+              </div>
+            </div>
+
+            <div class="row clearfix">
+              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                <label for="pembimbing2">Pembimbing2</label>
+              </div>
+              <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                <div class="form-group">
+                  <div class="form-line{{ $errors->has('pembimbing2') ? ' error' : '' }}">
+                    {!! Form::text('pembimbing2', $desc->pembimbing2, ['class'=>'form-control']) !!}
+                  </div>
+                  @if ($errors->has('pembimbing2'))
+                      <label class="error" for="pembimbing2">
+                          {{ $errors->first('pembimbing2') }}
+                      </label>
+                  @endif
+                </div>
+              </div>
+            </div>
+
+            <div class="row clearfix">
+              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                <label for="lab">Lab</label>
+              </div>
+              <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                <div class="form-group">
+                  <div class="form-line{{ $errors->has('lab') ? ' error' : '' }}">
+                    {!! Form::text('lab', $desc->lab, ['class'=>'form-control']) !!}
+                  </div>
+                  @if ($errors->has('lab'))
+                      <label class="error" for="lab">
+                          {{ $errors->first('lab') }}
+                      </label>
+                  @endif
+                </div>
+              </div>
+            </div>
+
+            <div class="row clearfix">
+              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                <label for="plab">Penanggung Jawab Lab</label>
+              </div>
+              <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                <div class="form-group">
+                  <div class="form-line{{ $errors->has('plab') ? ' error' : '' }}">
+                    {!! Form::text('plab', $desc->plab, ['class'=>'form-control']) !!}
+                  </div>
+                  @if ($errors->has('plab'))
+                      <label class="error" for="plab">
+                          {{ $errors->first('plab') }}
+                      </label>
+                  @endif
+                </div>
+              </div>
+            </div>
+
+            <div class="row clearfix">
+              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                <label for="wisuda">Wisuda</label>
+              </div>
+              <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                <div class="form-group">
+                  <div class="form-line{{ $errors->has('wisuda') ? ' error' : '' }}">
+                    {!! Form::text('wisuda', $desc->wisuda, ['class'=>'form-control']) !!}
+                  </div>
+                  @if ($errors->has('wisuda'))
+                      <label class="error" for="wisuda">
+                          {{ $errors->first('wisuda') }}
+                      </label>
+                  @endif
+                </div>
+              </div>
+            </div>
+          @endif
+
 
             <div class="row clearfix">
               <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">

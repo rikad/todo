@@ -175,7 +175,7 @@ class UsersController extends \App\Http\Controllers\Controller
      */
     public function edit($id)
     {
-        $data = User::select('users.id','users.name','users.username','users.is_active','users.email','roles.id as role')
+        $data = User::select('users.id','users.name','users.username','users.is_active','users.email','users.desc','roles.id as role')
                 ->join('role_user','role_user.user_id','users.id')
                 ->join('roles','role_user.role_id','roles.id')
                 ->find($id);
@@ -207,6 +207,20 @@ class UsersController extends \App\Http\Controllers\Controller
             $data['password'] = bcrypt($data['password']);
         }
 
+        if ($request->input('role') == 4) { //for mahasiswa
+
+            $desc = [
+                'wali' => $data['wali'],
+                'pembimbing1' => $data['pembimbing1'],
+                'pembimbing2' => $data['pembimbing2'],
+                'plab' => $data['plab'],
+                'lab' => $data['lab'],
+                'wisuda' => $data['wisuda'],
+            ];
+
+            $data['desc'] = json_encode($desc);
+        }
+
         $db = User::select('users.*','roles.id as role')
                 ->join('role_user','role_user.user_id','users.id')
                 ->join('roles','role_user.role_id','roles.id')
@@ -221,6 +235,12 @@ class UsersController extends \App\Http\Controllers\Controller
             "level"=>"success",
             "message"=>"Berhasil Di Simpan"
         ]);
+
+        if ($request->input('role') == 4) { //for mahasiswa
+
+            return redirect()->route('mahasiswa');
+
+        }
 
         return redirect()->route('users.index');
     }
