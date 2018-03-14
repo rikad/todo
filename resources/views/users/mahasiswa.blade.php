@@ -284,6 +284,7 @@
               data.pembimbing2 = desc.pembimbing2;
               data.wali = desc.wali;
               data.plab = desc.plab;
+              data.lab = desc.lab;
               data.wisuda = desc.wisuda;
             }
 
