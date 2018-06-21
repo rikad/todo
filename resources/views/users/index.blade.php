@@ -32,7 +32,6 @@
                 <th>Name</th>
                 <th>Username</th>
                 <th>Email</th>
-                <th>Is Active</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -97,13 +96,6 @@
       { data: 'name', name: 'name' },
       { data: 'username', name: 'username' },
       { data: 'email', name: 'email' },
-      { data: 'is_active', name: 'is_active' , searchable: false,render: function(data) {
-        if (data == 1) {
-          return '<span class="btn btn-xs btn-success">Active</span>';
-        } else {
-          return '<span class="btn btn-xs btn-danger">Disabled</span>';
-        }
-      }},
       { data: 'id', name: 'id', sortable: false,render: function(data) {
         return '<a href="'+genShowPath(data)+'"><button class="btn btn-success btn-xs">Lihat</button></a> @if(\Laratrust::can("update-users")) <a href="'+genEditPath(data)+'"><button class="btn btn-primary btn-xs">Ubah</button></a>@endif @if(\Laratrust::can("delete-users")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs">Hapus</button> @endif';
       }},
