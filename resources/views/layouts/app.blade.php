@@ -126,63 +126,41 @@
           </li>
           @endif
 
-          @if( \Laratrust::can('read-rooms'))
-          <li @if(\Request::is('modules/rooms') || \Request::is('modules/rooms/*') ) class="active" @endif>
-            <a href="{{ route('rooms.index') }}">
-              <i class="material-icons">room</i>
-              <span>Ruangan</span>
+          @if( \Laratrust::can('read-projects'))
+          <li @if(\Request::is('modules/projects') || \Request::is('modules/projects/*') ) class="active" @endif>
+            <a href="{{ route('projects.index') }}">
+              <i class="material-icons">assignment</i>
+              <span>Projects</span>
+            </a>
+          </li>
+          @endif
+          @if( \Laratrust::can('read-difficulties'))
+          <li @if(\Request::is('modules/difficulties') || \Request::is('modules/difficulties/*') ) class="active" @endif>
+            <a href="{{ route('difficulties.index') }}">
+              <i class="material-icons">assessment</i>
+              <span>Difficulties</span>
             </a>
           </li>
           @endif
 
-          @if( \Laratrust::can('read-dosen'))
-          <li @if(\Request::is('modules/dosen') || \Request::is('modules/dosen/*') ) class="active" @endif>
-            <a href="{{ route('dosen') }}">
-              <i class="material-icons">account_box</i>
-              <span>Dosen</span>
-            </a>
+          @if( \Laratrust::can('read-users'))
+          <li @if(\Request::is('settings/users') || \Request::is('settings/users/*') ) class="active" @endif>
+              <a href="{{ route('users.index') }}">
+                  <i class="material-icons">people</i>
+                  <span>Pengguna</span>
+              </a>
           </li>
           @endif
 
-          @if( \Laratrust::can('read-mahasiswa'))
-          <li @if(\Request::is('modules/mahasiswa') || \Request::is('modules/mahasiswa/*') ) class="active" @endif>
-            <a href="{{ route('mahasiswa') }}">
-              <i class="material-icons">supervisor_account</i>
-              <span>Mahasiswa</span>
-            </a>
+          @if( \Laratrust::can('read-permissions'))
+          <li @if(\Request::is('settings/roles') || \Request::is('settings/roles/*') ) class="active" @endif>
+              <a href="{{ route('roles.index') }}">
+                  <i class="material-icons">settings</i>
+                  <span>Role & Permission</span>
+              </a>
           </li>
           @endif
 
-          @if( \Laratrust::can('read-karyawan'))
-          <li @if(\Request::is('modules/karyawan') || \Request::is('modules/karyawan/*') ) class="active" @endif>
-            <a href="{{ route('karyawan') }}">
-              <i class="material-icons">account_circle</i>
-              <span>Tendik</span>
-            </a>
-          </li>
-          @endif
-
-          @if( \Laratrust::can('read-settings'))
-          <li @if(\Request::is('settings') || \Request::is('settings/*') ) class="active" @endif>
-            <a href="javascript:void(0);" class="menu-toggle">
-              <i class="material-icons">settings</i>
-              <span>Pengaturan</span>
-            </a>
-            <ul class="ml-menu">
-                <li @if(\Request::is('settings/users') || \Request::is('settings/users/*') ) class="active" @endif>
-                    <a href="{{ route('users.index') }}">
-                        <span>Pengguna</span>
-                    </a>
-                </li>
-                <li @if(\Request::is('settings/roles') || \Request::is('settings/roles/*') ) class="active" @endif>
-                    <a href="{{ route('roles.index') }}">
-                        <span>Role & Permission</span>
-                    </a>
-                </li>
-            </ul>
-          @endif
-
-          </li>
         </ul>
       </div>
       <!-- #Menu -->

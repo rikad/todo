@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Room;
+use App\Difficulty;
 use App\User;
 use App\AssetDetail;
 use Yajra\DataTables\DataTables;
@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Session;
 use DB;
 
 
-class RoomsController extends \App\Http\Controllers\Controller
+class DifficultiesController extends \App\Http\Controllers\Controller
 {
 
 
     private $validationRule = [
-                'name' => 'required|unique:rooms,name',
-                'code' => 'required|unique:rooms,code',
-                'code2' => 'required|unique:rooms,code2',
+                'name' => 'required|unique:difficulties,name',
+                'code' => 'required|unique:difficulties,code',
+                'code2' => 'required|unique:difficulties,code2',
                 'description' => 'required',
                 'user_id' => 'required'
             ];
@@ -32,11 +32,11 @@ class RoomsController extends \App\Http\Controllers\Controller
 
         if ($request->ajax()) {
             DB::statement(DB::raw('set @rownum=0'));
-            $data = Room::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'rooms.*');
+            $data = Difficulty::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'difficulties.*');
             return Datatables::of($data)->make(true);
         }
 
-        return view('rooms.index');
+        return view('difficulties.index');
     }
 
     /**
@@ -46,7 +46,7 @@ class RoomsController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        return view('rooms.form');
+        return view('difficulties.form');
     }
 
     /**
@@ -60,14 +60,14 @@ class RoomsController extends \App\Http\Controllers\Controller
         $this->validate($request, $this->validationRule);
 
         $data = $request->all();
-        $db = Room::create($data);
+        $db = Difficulty::create($data);
 
         Session::flash("status", [
             "level"=>"success",
             "message"=>"Berhasil Di Simpan"
         ]);
 
-        return redirect()->route('rooms.index');
+        return redirect()->route('difficulties.index');
     }
 
     /**
@@ -78,7 +78,7 @@ class RoomsController extends \App\Http\Controllers\Controller
      */
     public function show(Request $request,$id)
     {
-        $data = Room::find($id);
+        $data = Difficulty::find($id);
         $user = User::find($data->user_id);
         $data['handler'] = $user->name;
 
@@ -104,7 +104,7 @@ class RoomsController extends \App\Http\Controllers\Controller
             $outputPath = $path . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $data->name . Date('d-m-Y') . '.xlsx';
 
             $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-            $spreadsheet = $reader->load($path . 'roomsReport.xlsx');
+            $spreadsheet = $reader->load($path . 'difficultiesReport.xlsx');
 
             $spreadsheet->getActiveSheet()->setCellValue('C6', ': '.$data->code);
             $spreadsheet->getActiveSheet()->setCellValue('C7', ': '.$data->name);
@@ -130,7 +130,7 @@ class RoomsController extends \App\Http\Controllers\Controller
             return response()->download($outputPath)->deleteFileAfterSend(true);
         }
 
-        return view('rooms.show',$output);
+        return view('difficulties.show',$output);
     }
 
     /**
@@ -141,9 +141,9 @@ class RoomsController extends \App\Http\Controllers\Controller
      */
     public function edit($id)
     {
-        $data = Room::find($id);
+        $data = Difficulty::find($id);
 
-        return view('rooms.form')->with(compact('data'));
+        return view('difficulties.form')->with(compact('data'));
     }
 
     /**
@@ -162,7 +162,7 @@ class RoomsController extends \App\Http\Controllers\Controller
 
         $data = $request->all();
 
-        $db = Room::find($id);
+        $db = Difficulty::find($id);
 
         $db->update($data);
 
@@ -171,7 +171,7 @@ class RoomsController extends \App\Http\Controllers\Controller
             "message"=>"Berhasil Di Simpan"
         ]);
 
-        return redirect()->route('rooms.index');
+        return redirect()->route('difficulties.index');
     }
 
     /**
@@ -182,7 +182,7 @@ class RoomsController extends \App\Http\Controllers\Controller
      */
     public function destroy($id)
     {
-        $db = Room::find($id);
+        $db = Difficulty::find($id);
         $db->delete();
 
         Session::flash("status", [

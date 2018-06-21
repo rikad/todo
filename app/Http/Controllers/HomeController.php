@@ -29,6 +29,8 @@ class HomeController extends Controller
     public function index()
     {
 
+	return 'yes';
+
 
         return view('users/home',['data' => $data]);
     }

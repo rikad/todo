@@ -42,13 +42,5 @@ class LoginController extends Controller
         return 'username';
     }
 
-    protected function validateLogin(\Illuminate\Http\Request $request)
-    {
-        $this->validate($request, [
-            $this->username() => 'required|exists:users,' . $this->username() . ',is_active,1',
-            'password' => 'required',
-        ], [
-            $this->username() . '.exists' => 'The account has been disabled.'
-        ]);
-    }
+
 }

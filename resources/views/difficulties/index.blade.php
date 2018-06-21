@@ -4,7 +4,7 @@
 
 <div class="container-fluid">
   <div class="block-header">
-    <h2>Manajemen Pengguna</h2>
+    <h2>Difficulty Settings</h2>
   </div>
   <!-- Basic Table -->
   <div class="row clearfix">
@@ -12,7 +12,7 @@
       <div class="card">
         <div class="header bg-blue-grey">
           <h2>
-            List Ruangan
+            konfigurasi Tingkat Kesulitan Poin
           </h2>
           <ul class="header-dropdown m-r--5">
             <li class="dropdown">
@@ -20,8 +20,7 @@
                 <i class="material-icons">more_vert</i>
               </a>
               <ul class="dropdown-menu pull-right">
-              @if(\Laratrust::can("create-rooms"))
-                <li><a href="{{ route('rooms.create') }}">Tambah</a></li>
+              @if(\Laratrust::can("update-difficulties"))
               @endif
               </ul>
             </li>
@@ -31,11 +30,8 @@
           <table class="table" id="konten">
             <thead>
               <tr>
-                <th>No</th>
-                <th>Kode ITB</th>
-                <th>Kode Prodi</th>
-                <th>Nama Ruangan</th>
-                <th>Di Perbaharui</th>
+                <th>Tingkat</th>
+                <th>Exp/Poin</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -76,10 +72,10 @@
 <script src="{{ asset('plugins') }}/sweetalert/sweetalert.min.js"></script>
 <script>
 
-  var showPath = '{{ route("rooms.show",'') }}';
-  var editPath = '{{ route("rooms.edit",'=') }}';
-  var deletePath =  '{{ route("rooms.destroy",'') }}';
-  var addPath =  '{{ route("rooms.create") }}';
+  var showPath = '{{ route("difficulties.show",'') }}';
+  var editPath = '{{ route("difficulties.edit",'=') }}';
+  var deletePath =  '{{ route("difficulties.destroy",'') }}';
+  var addPath =  '{{ route("difficulties.create") }}';
 
   $(function() {
 
@@ -91,43 +87,46 @@
       return showPath+'/'+id;
     }
 
+    function rate(count) {
+      var o = '';
+      for (var i = count - 1; i >= 0; i--) {
+        o += '&#9733';
+      }
+      for (var i = 5 - count  - 1; i >= 0; i--) {
+        o += '&#9734';
+      }
+
+      return o;
+    }
+
 
     $('#konten').DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{!! route('rooms.index') !!}',
+      ajax: '{!! route('difficulties.index') !!}',
       columns: [
-      { data: 'no', name: 'no', searchable:false },
-      { data: 'name', name: 'name' },
-      { data: 'code2', name: 'code2' },
-      { data: 'name', name: 'name' },
-      { data: 'updated_at', name: 'updated_at' },
-      { data: 'id', name: 'id', sortable: false,render: function(data) {
-        return '<a href="'+genShowPath(data)+'"><button class="btn btn-success btn-xs">Lihat</button></a> @if(\Laratrust::can("update-rooms")) <a href="'+genEditPath(data)+'"><button class="btn btn-primary btn-xs">Ubah</button></a>@endif @if(\Laratrust::can("delete-rooms")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs">Hapus</button> @endif';
-      }},
+        { data: 'id', name: 'id', searchable:false, render: function(data) {
+          return rate(data);
+        }
+      },
+        { data: 'exp', name: 'exp' },
+        { data: 'id', name: 'id', sortable: false,render: function(data) {
+          return '@if(\Laratrust::can("update-difficulties")) <a href="'+genEditPath(data)+'"><button class="btn btn-primary btn-xs">Ubah</button></a>@endif';
+        }},
       ],
-      dom: 'Bfrtip',
+      dom: 'rt',
       responsive: true,
       buttons: [
       {
         extend: 'excel',
         className: 'btn btn-xs',
         text: '<i class="material-icons">print</i>'
-      },
-      @if(\Laratrust::can("create-dosen"))
-      {
-        text: '<i class="material-icons">add</i>',
-        className: 'btn btn-xs',
-        action: function () {
-          window.location.href = addPath;
-        }
       }
-      @endif
       ]
     });
   });
 
-  @if(\Laratrust::can("delete-rooms"))
+  @if(\Laratrust::can("delete-difficulties"))
   function deleteData(id) {
     swal({
         title: "Apakah Anda Yakin ?",

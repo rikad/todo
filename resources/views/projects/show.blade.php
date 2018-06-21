@@ -4,7 +4,10 @@
 
 <div class="container-fluid">
   <div class="block-header">
-    <h2>Detail Ruangan</h2>
+    <ol class="breadcrumb breadcrumb-bg-teal">
+        <li><a href="/"><i class="material-icons">home</i> Home</a></li>
+        <li class="active"><i class="material-icons">library_books</i> {{ $data->name }}</li>
+    </ol>
   </div>
 
   <!-- Basic Table -->
@@ -21,11 +24,9 @@
                 <i class="material-icons">more_vert</i>
               </a>
               <ul class="dropdown-menu pull-right">
-                @if(\Laratrust::can("update-rooms") || \Laratrust::can("create-rooms"))
-                <li><a href="{{ route('rooms.create') }}">Tambah</a></li>
-                <li><a href="{{ route('rooms.edit',$data->id) }}">Ubah</a></li>
+                @if(\Laratrust::can("update-projects") || \Laratrust::can("create-projects"))
+                <li><a href="{{ route('projects.edit',$data->id) }}">Ubah</a></li>
                 @endif
-                <li><a href="?print=true">Cetak Data Ruangan</a></li>
               </ul>
             </li>
           </ul>
@@ -41,10 +42,9 @@
             <div class="col-lg-8 col-md-4 col-sm-4 col-xs-12">
               <p>
                 <b>Nama</b> : {{ $data->name }} <hr>
-                <b>Kode ITB</b> : {{ $data->code }} <hr>
-                <b>Kode Prodi</b> : {{ $data->code2 }} <hr>
-                <b>Deskripsi</b> : {{ $data->description }} <hr>
-                <b>Penanggung Jawab</b> : {{ $data['handler'] }} <hr>
+                <b>Deskripsi</b> : {{ $data->desc }} <hr>
+                <b>Leader</b> : {{ $data->leader }} <hr>
+                <b>Programmers</b> : {{ implode(',', $programmers) }} <hr>
                 <b>Di Buat</b> : {{ $data->created_at }} <hr>
                 <b>Di Perbaharui</b> : {{ $data->updated_at }} <br>
               </p>
@@ -64,7 +64,7 @@
       <div class="card">
         <div class="header">
           <h2>
-            Detail Assets Di Ruangan
+            List Task
           </h2>
           <ul class="header-dropdown m-r--5">
             <li class="dropdown">
@@ -72,8 +72,7 @@
                 <i class="material-icons">more_vert</i>
               </a>
               <ul class="dropdown-menu pull-right">
-                <li><a href="{{ route('assets.create') }}">Tambah</a></li>
-                <li><a href="?print=true">Cetak Data Ruangan</a></li>
+                <li><a href="{{ route('tasks.create') }}">Tambah</a></li>
               </ul>
             </li>
           </ul>
@@ -86,15 +85,11 @@
               <tr>
                 <th style="text-align: center">#</th>
                 <th style="text-align: center">Name</th>
-                <th style="text-align: center">Serial/Kode</th>
-                <th style="text-align: center">No. PO</th>
-                <th style="text-align: center">No. BST</th>
-                <th style="text-align: center">Sumber Dana</th>
-                <th style="text-align: center">Harga</th>
-                <th style="text-align: center">Tahun</th>
-                <th style="text-align: center">Kondisi</th>
+                <th style="text-align: center">Difficulty</th>
+                <th style="text-align: center">Programmer</th>
+                <th style="text-align: center">Deadline</th>
                 <th style="text-align: center">Status</th>
-                @if(\Laratrust::can("update-rooms") || \Laratrust::can("delete-rooms"))
+                @if(\Laratrust::can("update-projects") || \Laratrust::can("delete-projects"))
                 <th style="text-align: center">Action</th>
                 @endif
               </tr>
@@ -106,35 +101,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Peminjaman Barang</h4>
-        </div>
-        <div class="modal-body">
-          <h4 align="center">Pilih Peminjam</h4>
-          <div class="form-group form-float">
-            <div class="form-line">
-              {!! Form::select('user_id', App\User::pluck('name','id'), null, ['id'=>'user_id','class' => 'form-control', 'placeholder'=>'Pilih Peminjam','data-live-search'=>'true' ] ) !!}
-            </div>
-          </div>
-          <button class="btn btn-primary" onclick="pinjamAjax()">Konfirmasi Peminjaman</button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  <!-- End Modal -->
-
 
 </div>
 
@@ -166,10 +132,9 @@
 
 <script>
 
-    var indexPath = '{{ route("assetdetails.index") }}';
-    var deletePath = '{{ route("assetdetails.destroy",'') }}';
-    var updatePath = '{{ route("assetdetails.update",'') }}';
-    var assetShow = '{{ route("assets.show",'') }}';
+    var indexPath = '{{ route("tasks.index") }}';
+    var deletePath = '{{ route("tasks.destroy",'') }}';
+    var updatePath = '{{ route("tasks.update",'') }}';
 
     $('#konten').DataTable({
       processing: true,
@@ -177,56 +142,27 @@
       ajax: '',
       columns: [
       { data: 'no', name: 'no', searchable:false },
-      { data: 'name', name: 'assets.name', render: function(data,type,full) {
-        return '<a href="'+assetShow+'/'+full.asset_id+'">' + data + '</a>';
+      { data: 'name', name: 'name' },
+      { data: 'difficulty', name: 'difficulty' },
+      { data: 'programmer', name: 'programmer' },
+      { data: 'deadline', name: 'deadline' },
+      { data: 'status', name: 'status',render: function(data) {
+      		if(data == 0) return '<span class="label label-warning">Ongoing</span>';
+          	if(data == 1) return '<span class="label label-success">Completed</span>';
+          	if(data == 2) return '<span class="label label-success">Waiting</span>';
+          	return '';
       }},
-      { data: 'serial', name: 'serial' },
-      { data: 'no_po', name: 'no_po' },
-      { data: 'no_bst', name: 'no_bst' },
-      { data: 'sourcefund', name: 'sourcefund' },
-      { data: 'price', name: 'price' , render: function(data) {
-        return 'Rp. ' + data;
-      }},
-      { data: 'year', name: 'year' },
-      { data: 'conditionText', name: 'conditionText' , searchable:false},
-      { data: 'user_id', name: 'user_id', searchable:false,render: function(data) {
-        return data != null ? 'Di Pinjam' : 'Tersedia';
-      }},
-        @if(\Laratrust::can("update-rooms"))
+
+        @if(\Laratrust::can("update-projects"))
       { data: 'id', name: 'id', sortable: false, searchable:false,render: function(data,type,full) {
-        var output = '';
-        if (full.user_id != null) {
-          output += '<button class="btn btn-warning btn-sm" onclick="returnData('+data+')">Konfirmasi Pengembalian</button>';
-        } else {
-          output += '<button class="btn btn-primary btn-sm" onclick="pinjam('+data+')">Pinjam</button>';
-          @if(\Laratrust::can("delete-rooms"))
-            output += '<button onclick="deleteAlocation('+data+')" class="btn btn-warning btn-sm">Hapus Alokasi</button>';
-          @endif
-        }
-        return output;
+        return data;
       }},
         @endif
       ],
-      responsive: true,
-      buttons: [
-      {
-        extend: 'excel',
-        className: 'btn btn-xs',
-        text: '<i class="material-icons">print</i>'
-      },
-      @if(\Laratrust::can("create-dosen"))
-      {
-        text: '<i class="material-icons">add</i>',
-        className: 'btn btn-xs',
-        action: function () {
-          window.location.href = addPath;
-        }
-      }
-      @endif
-      ]
+      responsive: true
     });
 
-    @if(\Laratrust::can("delete-rooms"))
+    @if(\Laratrust::can("delete-projects"))
     function deleteAlocation(id) {
       swal({
           title: "Apakah Anda Yakin ?",
@@ -296,7 +232,7 @@
     }
     @endif
 
-    @if(\Laratrust::can("update-rooms"))
+    @if(\Laratrust::can("update-projects"))
     var selectedID = 0;
     function pinjam(id) {
       $('#myModal').modal();

@@ -4,16 +4,15 @@
 
 <div class="container-fluid">
   <div class="block-header">
-    <h2>Manajemen Barang</h2>
+    <h2>Manajemen Projek</h2>
   </div>
-
   <!-- Basic Table -->
   <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <div class="card">
         <div class="header bg-blue-grey">
           <h2>
-            List Barang
+            List Projek
           </h2>
           <ul class="header-dropdown m-r--5">
             <li class="dropdown">
@@ -21,8 +20,8 @@
                 <i class="material-icons">more_vert</i>
               </a>
               <ul class="dropdown-menu pull-right">
-              @if(\Laratrust::can("create-assets"))
-                <li><a href="{{ route('assets.create') }}">Tambah</a></li>
+              @if(\Laratrust::can("create-projects"))
+                <li><a href="{{ route('projects.create') }}">Tambah</a></li>
               @endif
               </ul>
             </li>
@@ -32,11 +31,13 @@
           <table class="table" id="konten">
             <thead>
               <tr>
-                <th>Nama</th>
-                <th>Merk/Type</th>
-                <!-- <th>Tersedia</th> -->
-                <th>Teralokasi</th>
-                <th>Jumlah</th>
+                <th>No</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Leader</th>
+                <th>Status</th>
+                <th>Di Buat</th>
+                <th>Di Perbaharui</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -48,44 +49,6 @@
   </div>
   <!-- #END# Basic Table -->
 
-  <!-- Basic Table -->
-  <div class="row clearfix">
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-      <div class="card">
-        <div class="header bg-blue-grey">
-          <h2>
-            List Barang Di Pinjam
-          </h2>
-          <ul class="header-dropdown m-r--5">
-            <li class="dropdown">
-              <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                <i class="material-icons">more_vert</i>
-              </a>
-              <ul class="dropdown-menu pull-right">
-                <li><a href="#">#</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class="body table-responsive">
-          <table class="table" id="kontenPinjam">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nama</th>
-                <th>Merk/Type</th>
-                <th>Serial/Kode</th>
-                <th>Peminjam</th>
-                <th>Tanggal</th>
-              </tr>
-            </thead>
-          </table>
-
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- #END# Basic Table -->
 </div>
 
 @endsection
@@ -115,10 +78,10 @@
 <script src="{{ asset('plugins') }}/sweetalert/sweetalert.min.js"></script>
 <script>
 
-  var showPath = '{{ route("assets.show",'') }}';
-  var editPath = '{{ route("assets.edit",'=') }}';
-  var deletePath =  '{{ route("assets.destroy",'') }}';
-  var addPath =  '{{ route("assets.create") }}';
+  var showPath = '{{ route("projects.show",'') }}';
+  var editPath = '{{ route("projects.edit",'=') }}';
+  var deletePath =  '{{ route("projects.destroy",'') }}';
+  var addPath =  '{{ route("projects.create") }}';
 
   $(function() {
 
@@ -134,21 +97,19 @@
     $('#konten').DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{!! route('assets.index') !!}',
+      ajax: '{!! route('projects.index') !!}',
       columns: [
+      { data: 'no', name: 'no', searchable:false },
       { data: 'name', name: 'name' },
-      { data: 'type', name: 'type' },
-      // { data: 'available', name: 'available', searchable: false },
-      { data: 'alocation', name: 'alocation', searchable: false },
-      { data: 'jumlah', name: 'jumlah', searchable: false },
-      { data: 'id', name: 'id', sortable: false,render: function(data,type,full) {
-        var editBtn = '<a href="'+genShowPath(data)+'"><button class="btn btn-success btn-xs">Lihat</button></a> @if(\Laratrust::can("update-assets")) <a href="'+genEditPath(data)+'"><button class="btn btn-primary btn-xs">Ubah</button></a>@endif ';
-
-        @if(\Laratrust::can("delete-assets"))
-        editBtn += full.alocation == 0 ? '<button onclick="deleteData('+data+')" class="btn btn-danger btn-xs">Hapus</button>' : '';
-        @endif
-
-        return editBtn;
+      { data: 'desc', name: 'desc' },
+      { data: 'leader', name: 'leader' },
+      { data: 'status', name: 'status',render: function(data) {
+          return data == 0 ? '<span class="label label-warning">Belum Selesai</span>' : '<span class="label label-success">Selesai</span>';
+      }},
+      { data: 'created_at', name: 'created_at' },
+      { data: 'updated_at', name: 'updated_at' },
+      { data: 'id', name: 'id', sortable: false,render: function(data) {
+        return '<a href="'+genShowPath(data)+'"><button class="btn btn-success btn-xs">Lihat</button></a> @if(\Laratrust::can("update-projects")) <a href="'+genEditPath(data)+'"><button class="btn btn-primary btn-xs">Ubah</button></a>@endif @if(\Laratrust::can("delete-projects")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs">Hapus</button> @endif';
       }},
       ],
       dom: 'Bfrtip',
@@ -158,7 +119,8 @@
         extend: 'excel',
         className: 'btn btn-xs',
         text: '<i class="material-icons">print</i>'
-      }@if(\Laratrust::can('create-assets')),
+      },
+      @if(\Laratrust::can("create-dosen"))
       {
         text: '<i class="material-icons">add</i>',
         className: 'btn btn-xs',
@@ -169,33 +131,9 @@
       @endif
       ]
     });
-
-      $('#kontenPinjam').DataTable({
-      processing: true,
-      serverSide: true,
-      ajax: '{!! route('assets.index') !!}?mode=pinjam',
-      columns: [
-      { data: 'no', name: 'no' },
-      { data: 'name', name: 'name' },
-      { data: 'type', name: 'type' },
-      { data: 'serial', name: 'serial' },
-      { data: 'peminjam', name: 'peminjam' },
-      { data: 'updated_at', name: 'updated_at' }
-      ],
-      dom: 'Bfrtip',
-      responsive: true,
-      buttons: [
-      {
-        extend: 'excel',
-        className: 'btn btn-xs',
-        text: '<i class="material-icons">print</i>'
-      }
-      ]
-    });
-
   });
 
-  @if(\Laratrust::can("delete-assets"))
+  @if(\Laratrust::can("delete-projects"))
   function deleteData(id) {
     swal({
         title: "Apakah Anda Yakin ?",
